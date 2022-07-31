@@ -12,12 +12,6 @@
   .extension-detail {
     .markdown-desc {
       overflow: auto;
-      &::-webkit-scrollbar {
-        width: 0;
-      }
-      &:hover::-webkit-scrollbar {
-        width: 8px;
-      }
     }
   
     .ant-descriptions-row > td {

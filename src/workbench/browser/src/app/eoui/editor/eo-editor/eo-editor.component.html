@@ -1,15 +1,9 @@
-<div class="eo-editor" [style.--eo-editor-height]="minHeight + 'px'">
+<div class="eo-editor" [style.--eo-editor-height]="isNaN(minHeight) ? minHeight : minHeight + 'px'">
   <div class="button_list">
-    <span *ngIf="eventList.includes('type') && !hiddenList.includes('type')" i18n>
-      Content Type
-      <nz-select [(ngModel)]="editorType">
-        <nz-option *ngFor="let item of typeList" [nzValue]="item.value" [nzLabel]="item.label"></nz-option>
-      </nz-select>
-    </span>
-    <span class="btn" (click)="handleAction(item.event)" *ngFor="let item of buttonList">
-      <i nz-icon [nzType]="item.icon" nzTheme="outline"></i>
+    <div class="btn flex" (click)="handleAction(item.event)" *ngFor="let item of buttonList">
+      <eo-iconpark-icon class="mr5" name="{{item.icon}}" size="14px"></eo-iconpark-icon>
       <span>{{ item.label }}</span>
-    </span>
+    </div>
   </div>
   <ace class="ace-editor" [config]="aceConfig" [disabled]="disabled" [(value)]="code" [mode]="editorType"
     (blur)="log($event, 'blur')" (focus)="log($event, 'focus')" (copy)="log($event, 'copy')"

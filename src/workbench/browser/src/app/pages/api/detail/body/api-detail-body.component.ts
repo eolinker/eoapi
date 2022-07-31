@@ -4,7 +4,7 @@ import { ApiEditBody, ApiBodyType, JsonRootType } from '../../../../shared/servi
 import { ApiDetailService } from '../api-detail.service';
 @Component({
   selector: 'eo-api-detail-body',
-  templateUrl: './api-detail-body.component.html'
+  templateUrl: './api-detail-body.component.html',
 })
 export class ApiDetailBodyComponent implements OnInit, OnChanges, OnDestroy {
   @Input() model: string | ApiEditBody[] | any;
@@ -15,6 +15,7 @@ export class ApiDetailBodyComponent implements OnInit, OnChanges, OnDestroy {
   CONST: any = {
     JSON_ROOT_TYPE: Object.keys(JsonRootType).map((val) => ({ key: val, value: JsonRootType[val] })),
   };
+
   private itemStructure: ApiEditBody = {
     name: '',
     type: 'string',
@@ -29,8 +30,8 @@ export class ApiDetailBodyComponent implements OnInit, OnChanges, OnDestroy {
   }
   beforeChangeBodyByType(type) {
     switch (type) {
+      case ApiBodyType.Binary:
       case ApiBodyType.Raw: {
-        // case ApiBodyType.Binary:
         this.cache[type] = this.model || '';
         break;
       }

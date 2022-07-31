@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+}
+
 .eo-api-script {
   ::ng-deep .ant-tree-indent {
     width: 20px;

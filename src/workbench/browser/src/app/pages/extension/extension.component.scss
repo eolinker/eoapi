@@ -5,12 +5,10 @@
 
   .input {
     height: 30px;
-    border: none;
+    border-color: transparent;
     background-color: rgba(0,0,0,0.05);
-    border-radius: 3px;
-    &::placeholder {
-      color: rgba(0,0,0,0.5);
-      font-size: 0.9em;
+    &:hover {
+      border-color: #158565;
     }
   }
   .tree_node {

@@ -108,6 +108,7 @@ export class ApiDetailMockComponent implements OnInit, OnChanges {
 
   /**
    * create mock
+   *
    * @param mock
    * @returns
    */
@@ -125,6 +126,7 @@ export class ApiDetailMockComponent implements OnInit, OnChanges {
 
   /**
    * create mock object data
+   *
    * @param options
    * @returns
    */

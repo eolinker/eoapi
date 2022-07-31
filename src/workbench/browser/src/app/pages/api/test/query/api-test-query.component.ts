@@ -3,7 +3,7 @@ import { Component, OnInit, Input, OnChanges, Output, EventEmitter, OnDestroy } 
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { ApiTestQuery } from '../../../../shared/services/api-test/api-test-params.model';
+import { ApiTestQuery } from '../../../../shared/services/api-test/api-test.model';
 import { ApiTestService } from '../api-test.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class ApiTestQueryComponent implements OnInit, OnChanges, OnDestroy {
   }
   ngOnChanges(changes) {
     if (changes.model) {
-      let currentVal = changes.model.currentValue;
+      const currentVal = changes.model.currentValue;
       if (currentVal && (!currentVal.length || (currentVal.length && currentVal[currentVal.length - 1].name))) {
         this.model.push(Object.assign({}, this.itemStructure));
       }

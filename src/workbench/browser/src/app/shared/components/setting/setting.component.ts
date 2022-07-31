@@ -10,6 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { RemoteService } from 'eo/workbench/browser/src/app/shared/services/remote/remote.service';
 import { SettingService } from 'eo/workbench/browser/src/app/core/services/settings/settings.service';
 import { Router } from '@angular/router';
+import { debounce } from 'eo/workbench/browser/src/app/utils';
 
 interface TreeNode {
   name: string;
@@ -32,6 +33,7 @@ interface FlatNode {
   styleUrls: ['./setting.component.scss'],
 })
 export class SettingComponent implements OnInit {
+  extensitonConfigurations: any[];
   @Input() set isShowModal(val) {
     this.$isShowModal = val;
     if (val) {
@@ -48,6 +50,7 @@ export class SettingComponent implements OnInit {
   }
   @Output() isShowModalChange = new EventEmitter<any>();
   objectKeys = Object.keys;
+  isClick = false;
   /** Whether the remote data source */
   get isRemote() {
     return this.remoteService.isRemote;
@@ -94,7 +97,7 @@ export class SettingComponent implements OnInit {
   get settings() {
     return this.$settings;
   }
-  readonly treeNodes = [
+  treeNodes = [
     {
       name: $localize`:@@DataSource:Data Storage`,
       moduleID: 'eoapi-common',
@@ -111,7 +114,7 @@ export class SettingComponent implements OnInit {
       name: $localize`About`,
       moduleID: 'eoapi-about',
     },
-  ];
+  ] as const;
   /** local configure */
   localSettings = {};
   validateForm!: FormGroup;
@@ -127,12 +130,10 @@ export class SettingComponent implements OnInit {
 
   private destroy$: Subject<void> = new Subject<void>();
   constructor(
-    private fb: FormBuilder,
     private messageService: MessageService,
     private message: NzMessageService,
     private remoteService: RemoteService,
-    private settingService: SettingService,
-    private router: Router
+    private settingService: SettingService
   ) {}
 
   ngOnInit(): void {
@@ -171,52 +172,6 @@ export class SettingComponent implements OnInit {
   }
 
   /**
-   * set data
-   *
-   * @param properties
-   */
-  private setSettingsModel(properties, controls) {
-    //  Flat configuration object
-    Object.keys(properties).forEach((fieldKey) => {
-      const props = properties[fieldKey];
-      this.settings[fieldKey] = this.localSettings?.[fieldKey] ?? props.default;
-      // Extensible to add more default checks
-      if (props.required) {
-        controls[fieldKey] = [null, [Validators.required]];
-      } else {
-        controls[fieldKey] = [null];
-      }
-    });
-    // 深层嵌套的配置对象
-    // Object.keys(properties).forEach((fieldKey) => {
-    //   const keyArr = fieldKey.split('.');
-    //   const keyArrL = keyArr.length - 1;
-    //   keyArr.reduce((p, k, i) => {
-    //     const isLast = i === keyArrL;
-    //     p[k] ??= isLast ? this.settings[fieldKey] : {};
-    //     return p[k];
-    //   }, this.nestedSettings);
-    //   // 当settings变化时，将值同步到nestedSettings
-    //   Object.defineProperty(this.settings, fieldKey, {
-    //     get: () => this.getConfiguration(fieldKey),
-    //     set: (newVal) => {
-    //       const target = keyArr.slice(0, -1).reduce((p, k) => p[k], this.nestedSettings);
-    //       target[keyArr[keyArrL]] = newVal;
-    //     },
-    //   });
-    // });
-  }
-
-  /**
-   * Get the value of the corresponding configuration according to the key path
-   *
-   * @param key
-   * @returns
-   */
-  getConfiguration(key: string) {
-    // return key.split('.').reduce((p, k) => p?.[k], this.nestedSettings);
-  }
-  /**
    * Get the title of the module
    *
    * @param module
@@ -227,105 +182,75 @@ export class SettingComponent implements OnInit {
     return title;
   }
 
+  handleScroll = debounce((e: Event) => {
+    if (this.isClick) return;
+    const target = e.target as HTMLDivElement;
+    const treeNodes = this.dataSource._flattenedData.value;
+    treeNodes.some((node) => {
+      const el = target.querySelector(`#${node.moduleID}`) as HTMLDivElement;
+      if (el.offsetTop > target.scrollTop) {
+        this.selectListSelection.select(node);
+        return true;
+      }
+    });
+  }, 50);
+
   selectModule(node) {
-    // console.log('selectModule', node);
+    this.isClick = true;
     this.currentConfiguration = node.configuration || [];
     // console.log('this.currentConfiguration', this.currentConfiguration);
     this.selectListSelection.select(node);
+    const target = document.querySelector(`#${node.moduleID}`);
+    target?.scrollIntoView();
+    setTimeout(() => {
+      this.isClick = false;
+    }, 800);
   }
 
   /**
    * Parse the configuration information of all modules
    */
   private init() {
-    // if (!window.eo && !window.eo?.getFeature) {
-    //   return;
-    // }
-    // ! this.isVisible = true;
-    // Get local settings
     this.settings = this.localSettings = this.settingService.getSettings();
     console.log('localSettings', this.localSettings);
-    // const featureList = window.eo.getFeature('configuration');
     const modules = window.eo?.getModules() || new Map([]);
-    // const extensitonConfigurations = [...modules.values()].filter((n) => n.contributes?.configuration);
-    const extensitonConfigurations = [...modules.values()].filter((n) => n.features?.configuration);
-    const controls = {};
-    // All settings
-    const allSettings = structuredClone([eoapiSettings['eoapi-extensions']]);
-    // All configure
-    const allConfiguration = allSettings.map((n) => {
-      const configuration = n.features?.configuration || n.contributes?.configuration;
-      if (Array.isArray(configuration)) {
-        configuration.forEach((m) => (m.moduleID ??= n.moduleID));
-      } else {
-        configuration.moduleID ??= n.moduleID;
-      }
-      return configuration;
-    });
-    // 第三方扩展
-    const extensionsModule = allSettings.find((n) => n.moduleID === 'eoapi-extensions');
-    extensitonConfigurations.forEach((item) => {
-      const configuration = item?.features?.configuration || item?.contributes?.configuration;
-      if (configuration) {
-        const extensionsConfiguration =
-          extensionsModule.features?.configuration || extensionsModule.contributes?.configuration;
-        configuration.title = item.moduleName ?? configuration.title;
-        configuration.moduleID = item.moduleID;
-        extensionsConfiguration.push(configuration);
-      }
-    });
-    // Appends the module ID to the plug-in property
-    const appendModuleID = (properties, moduleID) =>
-      Object.keys(properties).reduce((prev, key) => {
-        prev[`${moduleID}.${key}`] = properties[key];
-        return prev;
-      }, {});
+    this.extensitonConfigurations = [...modules.values()]
+      .filter((n) => n.features?.configuration)
+      .map((n) => {
+        const configuration = n.features.configuration;
+        if (Array.isArray(configuration)) {
+          configuration.forEach((m) => (m.moduleID ??= n.moduleID));
+        } else {
+          configuration.moduleID ??= n.moduleID;
+        }
+        return configuration;
+      });
 
-    /** Generate settings model based on configuration configuration */
-    allConfiguration.forEach((item) => {
-      if (Array.isArray(item)) {
-        item.forEach((n) => {
-          n.properties = appendModuleID(n.properties, n.moduleID);
-          this.setSettingsModel(n.properties, controls);
-        });
-      } else {
-        item.properties = appendModuleID(item.properties, item.moduleID);
-        this.setSettingsModel(item.properties, controls);
-      }
-    });
-    type Configuration = typeof allConfiguration[number] | Array<typeof allConfiguration[number]>;
     // Recursively generate the setup tree
-    const generateTreeData = (configurations: Configuration = []) =>
+    const generateTreeData = (configurations = []) =>
       [].concat(configurations).reduce<TreeNode[]>((prev, curr) => {
         if (Array.isArray(curr)) {
           return prev.concat(generateTreeData(curr));
         }
         const treeItem: TreeNode = {
           name: curr.title,
+          moduleID: curr.moduleID,
           configuration: [].concat(curr),
         };
         return prev.concat(treeItem);
       }, []);
     // All settings
-    const treeData = structuredClone(this.treeNodes);
+    const treeData = JSON.parse(JSON.stringify(this.treeNodes));
     const extensions = treeData.find((n) => n.moduleID === 'eoapi-extensions');
-    const extensionConfiguration = allSettings[0].features?.configuration || allSettings[0].contributes?.configuration;
-    extensions.children = generateTreeData(extensionConfiguration);
-    extensions.configuration = extensionConfiguration;
+    extensions.children = generateTreeData(this.extensitonConfigurations);
+    extensions.configuration = this.extensitonConfigurations;
     this.dataSource.setData(treeData);
     this.treeControl.expandAll();
-    this.validateForm = this.fb.group(controls);
-    this.validateForm.valueChanges.pipe(debounceTime(300)).subscribe(this.handleSave);
+
     // The first item is selected by default
     this.selectModule(this.treeControl.dataNodes.at(0));
   }
 
-  navToExtensionList() {
-    this.router.navigate(['home/extension/list'], {
-      queryParams: { type: 'all' },
-    });
-    this.handleCancel();
-  }
   handleShowModal() {
     this.isShowModal = true;
   }

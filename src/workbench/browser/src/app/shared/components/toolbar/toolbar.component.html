@@ -1,10 +1,20 @@
 <div class="app_toolbar f_row">
-  <div class="mx-4 flex">
-    <button nz-button nzType="text" class="f_row_ac" (click)="toggleCollapsed()">
-      <i class="iconfont icon-zhediedaohang"></i>
+  <div class="flex">
+    <button
+      nz-button
+      nzType="text"
+      class="f_row_ac"
+      i18n-nzTooltipTitle
+      nz-tooltip
+      [nzTooltipPlacement]="['topLeft', 'leftTop']"
+      nzTooltipTitle="Hide/Show Sidebar"
+      (click)="toggleCollapsed()"
+    >
+      <eo-iconpark-icon *ngIf="!sidebar.collapsed" name="expand-right"></eo-iconpark-icon>
+      <eo-iconpark-icon *ngIf="sidebar.collapsed" name="expand-left"></eo-iconpark-icon>
     </button>
     <!-- <button nz-button nzType="text" class="f_row_ac" (click)="changeTheme()">
-      <i class="iconfont icon-zhuti_yifu"></i>
+      <i class=" icon-zhuti_yifu"></i>
     </button> -->
   </div>
 </div>

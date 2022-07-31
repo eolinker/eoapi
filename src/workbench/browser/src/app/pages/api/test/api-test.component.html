@@ -1,162 +1,123 @@
 <div class="test_wrap">
-  <form nz-form [nzLayout]="'vertical'" [formGroup]="validateForm">
-    <nz-form-item nz-col class="basic_info_container">
-      <nz-form-control>
-        <nz-input-group nzCompact>
-          <nz-select class="w_100" [(ngModel)]="apiData.protocol" formControlName="protocol">
-            <nz-option *ngFor="let item of REQUEST_PROTOCOL" [nzLabel]="item.key" [nzValue]="item.value"></nz-option>
-          </nz-select>
-          <nz-select class="!w-[106px] flex-none" [(ngModel)]="apiData.method" formControlName="method">
-            <nz-option *ngFor="let item of REQUEST_METHOD" [nzLabel]="item.key" [nzValue]="item.value"></nz-option>
-          </nz-select>
-          <div
-            *ngIf="env.hostUri"
-            nz-typography
-            nzEllipsis
-            class="env_front_uri"
-            nzTooltipTitle="{{ env.hostUri }}"
-            nzTooltipPlacement="bottom"
-            nz-tooltip
-          >
-            {{ env.hostUri }}
-          </div>
-          <input
-            type="text"
-            i18n-placeholder
-            placeholder="Enter URL"
-            name="uri"
-            nz-input
-            formControlName="uri"
-            [(ngModel)]="apiData.uri"
-            (change)="changeUri()"
-          />
-          <button type="submit" nz-button nzType="primary" class="ml10" (click)="clickTest()">
-            <span *ngIf="status === 'testing'" i18n>Abort</span>
-            <span *ngIf="status !== 'testing'" i18n>Send</span>
-            <span *ngIf="status === 'testing' && waitSeconds" class="ml5">{{ waitSeconds }}</span>
-          </button>
-          <button
-            type="button"
-            *ngIf="!apiData.uuid"
-            nz-button
-            nzType="default"
-            (click)="saveTestDataToApi()"
-            class="ml10"
-            i18n
-          >
-            Save as API
-          </button>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-  </form>
-  <div class="scroll_container">
-    <!-- Request Info -->
-    <nz-tabset [nzTabBarStyle]="{ 'padding-left': '10px' }" [nzAnimated]="false" [(nzSelectedIndex)]="nzSelectedIndex">
-      <!-- Request Headers -->
-      <nz-tab [nzTitle]="headerTitleTmp" [nzForceRender]="true">
-        <ng-template #headerTitleTmp>
-          <span i18n="@@RequestHeaders">Headers</span>
-          <span class="eo-tab-icon ml-[4px]" *ngIf="bindGetApiParamNum(apiData.requestHeaders)">{{
-            apiData.requestHeaders | apiParamsNum
-          }}</span>
-        </ng-template>
-        <eo-api-test-header class="eo_theme_iblock bbd" [(model)]="apiData.requestHeaders"></eo-api-test-header>
-      </nz-tab>
-      <!--Request Info -->
-      <nz-tab [nzTitle]="bodyTitleTmp" [nzForceRender]="true">
-        <ng-template #bodyTitleTmp>
-          <span i18n>Body</span>
-          <span
-            class="iconfont icon-circle eo-tab-theme-icon"
-            *ngIf="
-              ['formData', 'json', 'xml'].includes(apiData.requestBodyType)
-                ? bindGetApiParamNum(apiData.requestBody)
-                : apiData.requestBody?.length
-            "
-          ></span>
-        </ng-template>
-        <eo-api-test-body
-          class="eo_theme_iblock bbd"
-          [(bodyType)]="apiData.requestBodyType"
-          [(model)]="apiData.requestBody"
-          [supportType]="['formData', 'json', 'xml', 'raw', 'binary']"
-          [(jsonRootType)]="apiData.requestBodyJsonType"
-        ></eo-api-test-body>
-      </nz-tab>
-      <nz-tab [nzTitle]="queryTitleTmp" [nzForceRender]="true">
-        <ng-template #queryTitleTmp>
-          <span i18n>Query</span>
-          <span class="eo-tab-icon ml-[4px]" *ngIf="bindGetApiParamNum(apiData.queryParams)">{{
-            apiData.queryParams | apiParamsNum
-          }}</span>
-        </ng-template>
-        <eo-api-test-query
-          class="eo_theme_iblock bbd"
-          [model]="apiData.queryParams"
-          (modelChange)="changeQuery($event)"
-        ></eo-api-test-query>
-      </nz-tab>
-      <nz-tab [nzTitle]="restTitleTmp" [nzForceRender]="true">
-        <ng-template #restTitleTmp>
-          <span i18n>REST</span>
-          <span class="eo-tab-icon ml-[4px]" *ngIf="bindGetApiParamNum(apiData.restParams)">{{
-            apiData.restParams | apiParamsNum
-          }}</span>
-        </ng-template>
-        <eo-api-test-rest class="eo_theme_iblock bbd" [model]="apiData.restParams"></eo-api-test-rest>
-      </nz-tab>
-      <nz-tab [nzTitle]="preScriptTitleTmp" [nzForceRender]="true">
-        <ng-template #preScriptTitleTmp>
-          <span i18n>Pre-request Script</span>
-          <span class="iconfont icon-circle	 eo-tab-theme-icon" *ngIf="beforeScript?.trim()"></span>
-        </ng-template>
-        <eo-api-script
-          *ngIf="nzSelectedIndex === 4"
-          [(code)]="beforeScript"
-          [treeData]="BEFORE_DATA"
-          [completions]="beforeScriptCompletions"
-          class="eo_theme_iblock bbd"
-        ></eo-api-script>
-      </nz-tab>
-      <nz-tab [nzTitle]="suffixScriptTitleTmp" [nzForceRender]="true">
-        <ng-template #suffixScriptTitleTmp>
-          <span i18n>After-response Script</span>
-          <span class="iconfont icon-circle eo-tab-theme-icon" *ngIf="afterScript?.trim()"></span>
-        </ng-template>
-        <eo-api-script
-          *ngIf="nzSelectedIndex === 5"
-          [(code)]="afterScript"
-          [treeData]="AFTER_DATA"
-          [completions]="afterScriptCompletions"
-          class="eo_theme_iblock bbd"
-        ></eo-api-script>
-      </nz-tab>
-    </nz-tabset>
-    <!-- Response -->
-    <nz-tabset
-      [nzTabBarStyle]="{ 'padding-left': '10px' }"
-      [(nzSelectedIndex)]="tabIndexRes"
-      [nzAnimated]="false"
-      class="mt10 response_container"
-    >
-      <nz-tab i18n-nzTitle nzTitle="Response">
-        <eo-api-test-result-response [model]="testResult?.response"></eo-api-test-result-response>
-      </nz-tab>
-      <div>
-        <nz-tab i18n-nzTitle nzTitle="Response Headers">
-          <eo-api-test-result-header [model]="testResult?.response?.headers"></eo-api-test-result-header>
+  <eo-split-panel [topStyle]="{ height: '45%' }">
+    <div class="top_container scroll_container" top>
+      <form nz-form [nzLayout]="'vertical'" [formGroup]="validateForm">
+        <nz-form-item nz-col class="basic_info_container">
+          <nz-form-control>
+            <nz-input-group nzCompact>
+              <nz-select class="w_100" [(ngModel)]="apiData.protocol" formControlName="protocol">
+                <nz-option *ngFor="let item of REQUEST_PROTOCOL" [nzLabel]="item.key" [nzValue]="item.value">
+                </nz-option>
+              </nz-select>
+              <nz-select class="!w-[106px] flex-none" [(ngModel)]="apiData.method" formControlName="method">
+                <nz-option *ngFor="let item of REQUEST_METHOD" [nzLabel]="item.key" [nzValue]="item.value"></nz-option>
+              </nz-select>
+              <div *ngIf="env.hostUri" nz-typography nzEllipsis class="env_front_uri" nzTooltipTitle="{{ env.hostUri }}"
+                nzTooltipPlacement="bottom" nz-tooltip>
+                {{ env.hostUri }}
+              </div>
+              <input type="text" i18n-placeholder placeholder="Enter URL" name="uri" nz-input formControlName="uri"
+                [(ngModel)]="apiData.uri" (change)="changeUri()" />
+              <button type="submit" nz-button nzType="primary" class="ml10 w_100" (click)="clickTest()">
+                <span *ngIf="status !== 'testing'" i18n><span>Send</span></span>
+                <span *ngIf="status === 'testing'" i18n>Abort</span>
+                <span *ngIf="status === 'testing' && waitSeconds" class="ml-1">{{ waitSeconds }}</span>
+              </button>
+              <button type="button" *ngIf="!apiData.uuid" nz-button nzType="default" (click)="saveTestDataToApi()"
+                class="ml10" i18n>
+                Save as API
+              </button>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+      <!-- Request Info -->
+      <nz-tabset [nzTabBarStyle]="{ 'padding-left': '10px' }" [nzAnimated]="false"
+        [(nzSelectedIndex)]="nzSelectedIndex">
+        <!-- Request Headers -->
+        <nz-tab [nzTitle]="headerTitleTmp" [nzForceRender]="true">
+          <ng-template #headerTitleTmp>
+            <span i18n="@@RequestHeaders">Headers</span>
+            <span class="eo-tab-icon ml-[4px]" *ngIf="bindGetApiParamNum(apiData.requestHeaders)">{{
+              apiData.requestHeaders | apiParamsNum
+              }}</span>
+          </ng-template>
+          <eo-api-test-header class="eo_theme_iblock bbd" [(model)]="apiData.requestHeaders"></eo-api-test-header>
         </nz-tab>
-      </div>
-      <nz-tab i18n-nzTitle nzTitle="Body">
-        <eo-api-test-result-request-body [model]="testResult.request?.requestBody"></eo-api-test-result-request-body>
-      </nz-tab>
-      <nz-tab i18n-nzTitle nzTitle="Request Headers">
-        <eo-api-test-result-header [model]="testResult.request?.requestHeaders"></eo-api-test-result-header>
-      </nz-tab>
-    </nz-tabset>
-    <div id="test-response"></div>
-  </div>
+        <!--Request Info -->
+        <nz-tab [nzTitle]="bodyTitleTmp" [nzForceRender]="true">
+          <ng-template #bodyTitleTmp>
+            <span i18n>Body</span>
+            <span class="eo-tab-theme-icon" *ngIf="
+                ['formData', 'json', 'xml'].includes(apiData.requestBodyType)
+                  ? bindGetApiParamNum(apiData.requestBody)
+                  : apiData.requestBody?.length
+              "></span>
+          </ng-template>
+          <eo-api-test-body class="eo_theme_iblock bbd" [(contentType)]="contentType"
+            (contentTypeChange)="changeContentType($event)" [(bodyType)]="apiData.requestBodyType"
+            (bodyTypeChange)="changeBodyType($event)" [(model)]="apiData.requestBody"
+            [supportType]="['formData', 'raw', 'binary']"></eo-api-test-body>
+        </nz-tab>
+        <nz-tab [nzTitle]="queryTitleTmp" [nzForceRender]="true">
+          <ng-template #queryTitleTmp>
+            <span i18n>Query</span>
+            <span class="eo-tab-icon ml-[4px]" *ngIf="bindGetApiParamNum(apiData.queryParams)">{{
+              apiData.queryParams | apiParamsNum
+              }}</span>
+          </ng-template>
+          <eo-api-test-query class="eo_theme_iblock bbd" [model]="apiData.queryParams"
+            (modelChange)="changeQuery($event)"></eo-api-test-query>
+        </nz-tab>
+        <nz-tab [nzTitle]="restTitleTmp" [nzForceRender]="true">
+          <ng-template #restTitleTmp>
+            <span i18n>REST</span>
+            <span class="eo-tab-icon ml-[4px]" *ngIf="bindGetApiParamNum(apiData.restParams)">{{
+              apiData.restParams | apiParamsNum
+              }}</span>
+          </ng-template>
+          <eo-api-test-rest class="eo_theme_iblock bbd" [model]="apiData.restParams"></eo-api-test-rest>
+        </nz-tab>
+        <nz-tab [nzTitle]="preScriptTitleTmp" [nzForceRender]="true">
+          <ng-template #preScriptTitleTmp>
+            <span i18n>Pre-request Script</span>
+            <span class="eo-tab-theme-icon" *ngIf="beforeScript?.trim()"></span>
+          </ng-template>
+          <eo-api-script *ngIf="nzSelectedIndex === 4" [(code)]="beforeScript" [treeData]="BEFORE_DATA"
+            [completions]="beforeScriptCompletions" class="eo_theme_iblock bbd"></eo-api-script>
+        </nz-tab>
+        <nz-tab [nzTitle]="suffixScriptTitleTmp" [nzForceRender]="true">
+          <ng-template #suffixScriptTitleTmp>
+            <span i18n>After-response Script</span>
+            <span class="eo-tab-theme-icon" *ngIf="afterScript?.trim()"></span>
+          </ng-template>
+          <eo-api-script *ngIf="nzSelectedIndex === 5" [(code)]="afterScript" [treeData]="AFTER_DATA"
+            [completions]="afterScriptCompletions" class="eo_theme_iblock bbd"></eo-api-script>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+    <div class="bottom_container scroll_container" bottom>
+      <!-- Response -->
+      <nz-tabset [nzTabBarStyle]="{ 'padding-left': '10px' }" [(nzSelectedIndex)]="tabIndexRes" [nzAnimated]="false"
+        class="mt-2.5 response_container">
+        <nz-tab i18n-nzTitle nzTitle="Response">
+          <eo-api-test-result-response [model]="testResult?.response"></eo-api-test-result-response>
+        </nz-tab>
+        <div>
+          <nz-tab i18n-nzTitle nzTitle="Response Headers">
+            <eo-api-test-result-header [model]="testResult?.response?.headers"></eo-api-test-result-header>
+          </nz-tab>
+        </div>
+        <nz-tab i18n-nzTitle nzTitle="Body">
+          <eo-api-test-result-request-body [model]="testResult.request?.requestBody"></eo-api-test-result-request-body>
+        </nz-tab>
+        <nz-tab i18n-nzTitle nzTitle="Request Headers">
+          <eo-api-test-result-header [model]="testResult.request?.requestHeaders"></eo-api-test-result-header>
+        </nz-tab>
+      </nz-tabset>
+      <div id="test-response"></div>
+    </div>
+  </eo-split-panel>
 </div>
 <div class="invisible" hidden>
   <eo-api-test-history [apiID]="apiData.uuid" (clickItem)="restoreHistory($event)" #historyComponent>

@@ -15,6 +15,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzCodeEditorModule } from 'ng-zorro-antd/code-editor';
 
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { NzMessageModule } from 'ng-zorro-antd/message';
@@ -28,6 +29,9 @@ import { ApiScriptComponent } from './components/api-script/api-script.component
 import { EouiModule } from 'eo/workbench/browser/src/app/eoui/eoui.module';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { EnvListComponent } from 'eo/workbench/browser/src/app/shared/components/env-list/env-list.component';
+import { SplitPanelComponent } from 'eo/workbench/browser/src/app/shared/components/split-panel/split.panel.component';
+import { SplitXComponent } from 'eo/workbench/browser/src/app/shared/components/split-x/split-x.component';
+import { EoMonacoEditorComponent } from 'eo/workbench/browser/src/app/shared/components/monaco-editor/monaco-editor.component';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
 const COMPONENTS = [
@@ -36,6 +40,9 @@ const COMPONENTS = [
   SidebarComponent,
   PageNotFoundComponent,
   ApiScriptComponent,
+  SplitPanelComponent,
+  SplitXComponent,
+  EoMonacoEditorComponent,
 ];
 @NgModule({
   imports: [
@@ -60,9 +67,20 @@ const COMPONENTS = [
     EouiModule,
     NzTreeModule,
     NzPopoverModule,
+    NzCodeEditorModule,
   ],
   declarations: [WebviewDirective, ...COMPONENTS, ApiParamsNumPipe, PageBlankComponent, EnvListComponent],
   providers: [ModalService],
-  exports: [WebviewDirective, ...COMPONENTS, ApiParamsNumPipe, NzPopoverModule, EoIconparkIconModule, EnvListComponent],
+  exports: [
+    WebviewDirective,
+    ...COMPONENTS,
+    ApiParamsNumPipe,
+    NzPopoverModule,
+    NzCodeEditorModule,
+    EoIconparkIconModule,
+    EnvListComponent,
+    SplitPanelComponent,
+    EoMonacoEditorComponent,
+  ],
 })
 export class SharedModule {}

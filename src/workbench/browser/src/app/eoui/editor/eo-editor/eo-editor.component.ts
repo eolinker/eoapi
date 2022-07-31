@@ -19,7 +19,7 @@ type EventType = 'format' | 'copy' | 'search' | 'replace' | 'type' | 'download' 
 const eventHash = new Map()
   .set('format', {
     label: $localize`Format`,
-    icon: 'deployment-unit',
+    icon: 'magic',
   })
   .set('copy', {
     label: $localize`:@@Copy:Copy`,
@@ -29,17 +29,9 @@ const eventHash = new Map()
     label: $localize`:@@Search:Search`,
     icon: 'search',
   })
-  .set('download', {
-    label: $localize`Download`,
-    icon: 'download',
-  })
-  .set('newTab', {
-    label: $localize`New Tab`,
-    icon: 'file-text',
-  })
   .set('replace', {
     label: $localize`Replace`,
-    icon: 'security-scan',
+    icon: 'file-text-one',
   });
 
 @Component({
@@ -51,7 +43,7 @@ export class EoEditorComponent implements AfterViewInit, OnInit, OnChanges {
   @Input() eventList: EventType[] = [];
   @Input() hiddenList: string[] = [];
   @Input() code: string;
-  @Input() minHeight = 70;
+  @Input() minHeight = '70';
   @Input() editorType = 'json';
   @Input() autoFormat = false;
   @Input() disabled = false;
@@ -93,6 +85,10 @@ export class EoEditorComponent implements AfterViewInit, OnInit, OnChanges {
 
   get aceConfig() {
     return { ...this.$config, ...this.config };
+  }
+
+  isNaN(val) {
+    return Number.isNaN(Number(val));
   }
 
   constructor(private message: EoMessageService, private electron: ElectronService) {}

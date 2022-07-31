@@ -1,41 +1,13 @@
-<!-- <ng-container *ngIf="isVisible">
-  <span
-    nz-popover
-    [nzPopoverContent]="contentTemplate"
-    [nzPopoverOverlayStyle]="{ left: '-12px', marginBottom: '8px' }"
-    nzPopoverOverlayClassName="sidebar_setting_popover"
-    nzPopoverPlacement="rightBottom"
-    class="sidebar_item sidebar_setting"
-  >
-    <i nz-icon nzType="setting"></i>
-  </span>
-
-  <ng-template #contentTemplate>
-    <ul nz-menu [nzSelectable]="false">
-      <li nz-menu-item (click)="handleShowModal()">设置</li>
-      <li nz-menu-item (click)="switchDataSource()">{{ isRemote ? '切换到本地' : '切换到远程' }}</li>
-    </ul>
-  </ng-template>
-</ng-container> -->
-
-<nz-modal
-  [(nzVisible)]="isShowModal"
-  nzWidth="70%"
-  [nzFooter]="null"
-  [nzBodyStyle]="{ paddingLeft: '6px' }"
-  (nzOnCancel)="handleCancel()"
->
+<nz-modal [(nzVisible)]="isShowModal" nzWidth="70%" [nzFooter]="null" [nzBodyStyle]="{ paddingLeft: '6px' }"
+  (nzOnCancel)="handleCancel()">
   <section *nzModalContent class="container">
     <div class="tree-view">
-      <img src="assets/images/logo-text.svg" class="mb-[10px] h-[40px]" />
+      <img src="assets/images/logo-text.svg" class="h-[40px]" />
       <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [nzBlockNode]="true">
         <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
           <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
-          <nz-tree-node-option
-            [nzDisabled]="node.disabled"
-            [nzSelected]="selectListSelection.isSelected(node)"
-            (nzClick)="selectModule(node)"
-          >
+          <nz-tree-node-option [nzDisabled]="node.disabled" [nzSelected]="selectListSelection.isSelected(node)"
+            (nzClick)="selectModule(node)">
             {{ node.name }}
           </nz-tree-node-option>
         </nz-tree-node>
@@ -44,116 +16,28 @@
           <nz-tree-node-toggle>
             <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
           </nz-tree-node-toggle>
-          <nz-tree-node-option
-            [nzDisabled]="node.disabled"
-            [nzSelected]="selectListSelection.isSelected(node)"
-            (nzClick)="selectModule(node)"
-          >
+          <nz-tree-node-option [nzDisabled]="node.disabled" [nzSelected]="selectListSelection.isSelected(node)"
+            (nzClick)="selectModule(node)">
             {{ node.name }}
           </nz-tree-node-option>
         </nz-tree-node>
       </nz-tree-view>
     </div>
     <nz-divider nzType="vertical" class="divider"></nz-divider>
-    <eo-data-storage *ngIf="selected === 'eoapi-common'" [(model)]="settings"></eo-data-storage>
-    <eo-language-switcher *ngIf="selected === 'eoapi-language'" [(model)]="settings"> </eo-language-switcher>
-    <form
-      *ngIf="currentConfiguration.length"
-      nz-form
-      [nzLayout]="'vertical'"
-      [formGroup]="validateForm"
-      (ngSubmit)="handleSave()"
-      class="form"
-    >
-      <div *ngFor="let module of currentConfiguration">
-        <h2 class="title" *ngIf="module.title">{{ module.title }}</h2>
-        <nz-form-item nz-col class="fg1" *ngFor="let field of objectKeys(module.properties)">
-          <ng-container *ngIf="module.properties[field]?.label">
-            <nz-form-label nzFor="{{ field }}" [nzRequired]="module.properties[field]?.required" class="label">
-              {{ module.properties[field]?.label }}
-            </nz-form-label>
-          </ng-container>
-          <!-- 二级说明 -->
-          <div
-            *ngIf="module.properties[field]?.type !== 'boolean' && module.properties[field]?.description"
-            class="description"
-          >
-            <eo-shadow-dom [text]="module.properties[field]?.description || ''"></eo-shadow-dom>
-          </div>
-          <nz-form-control i18n-nzErrorTip nzErrorTip="Please Enter {{ module.properties[field]?.label }}" class="form-control">
-            <!-- 字符串类型 -->
-            <ng-container *ngIf="module.properties[field]?.type === 'string'">
-              <input
-                type="text"
-                nz-input
-                id="{{ field }}"
-                [disabled]="module.properties[field]?.disabled"
-                i18n-placeholder
-                placeholder="{{ module.properties[field]?.placeholder ?? 'Please Enter ' + module.properties[field]?.label }}"
-                formControlName="{{ field }}"
-                [(ngModel)]="settings[field]"
-              />
-            </ng-container>
+    <div (scroll)="handleScroll($event)" class="overflow-auto setting-container scroll-smooth mt-[37px]">
+      <!-- Data Storage -->
+      <eo-data-storage [(model)]="settings" [id]="treeNodes[0].moduleID"></eo-data-storage>
+      <nz-divider></nz-divider>
+      <!-- Language -->
+      <eo-language-switcher [(model)]="settings" [id]="treeNodes[1].moduleID"> </eo-language-switcher>
+      <nz-divider></nz-divider>
+      <eo-extension-setting [(model)]="settings" [localSettings]="localSettings" [id]="treeNodes[2].moduleID"
+        [extensitonConfigurations]="extensitonConfigurations"></eo-extension-setting>
+      <nz-divider></nz-divider>
+      <!-- About -->
+      <eo-about [id]="treeNodes[3].moduleID"></eo-about>
+    </div>
 
-            <!-- 布尔类型 -->
-            <ng-container *ngIf="module.properties[field]?.type === 'boolean'">
-              <label
-                nz-checkbox
-                [(ngModel)]="settings[field]"
-                id="{{ field }}"
-                [nzDisabled]="module.properties[field]?.disabled"
-                formControlName="{{ field }}"
-                >{{ module.properties[field]?.description }}</label
-              >
-            </ng-container>
-
-            <!-- 数字类型 -->
-            <ng-container *ngIf="module.properties[field]?.type === 'number'">
-              <nz-input-number
-                [(ngModel)]="settings[field]"
-                id="{{ field }}"
-                [nzDisabled]="module.properties[field]?.disabled"
-                formControlName="{{ field }}"
-              >
-                {{ module.properties[field]?.description }}</nz-input-number
-              >
-            </ng-container>
-
-            <!-- 组件类型 -->
-            <ng-container *ngIf="module.properties[field]?.type === 'component'">
-              <!-- 默认主题组件 -->
-              <eo-select-theme *ngIf="settings[field] === 'eo-select-theme'"></eo-select-theme>
-              <!-- 关于eopai -->
-              <eo-about *ngIf="settings[field] === 'eo-about'"></eo-about>
-              <!-- 数据源切换 -->
-              <button
-                *ngIf="settings[field] === 'swtich-dataSource-btn'"
-                nz-button
-                nzType="primary"
-                nzSize="small"
-                [nzLoading]="switchDataSourceLoading"
-                (click)="switchDataSource()"
-                i18n
-              >
-                Switched to {{ isRemote ? 'Localhost' : 'Remote Server' }}
-              </button>
-            </ng-container>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </form>
-    <eo-about *ngIf="selected === 'eoapi-about'"></eo-about>
-    <nz-empty
-      *ngIf="!currentConfiguration.length && selected === 'eoapi-extensions'"
-      nzNotFoundImage="simple"
-      [nzNotFoundContent]="contentTpl"
-    >
-      <ng-template #contentTpl>
-        <span i18n
-          >No plugins are currently installed,<a class="eo_link" (click)="navToExtensionList()"> go to install </a>
-        </span>
-      </ng-template>
-    </nz-empty>
   </section>
   <!-- <div *nzModalFooter class="footer"> -->
   <!-- <button nz-button nzType="primary" (click)="handleSave()">保存</button>

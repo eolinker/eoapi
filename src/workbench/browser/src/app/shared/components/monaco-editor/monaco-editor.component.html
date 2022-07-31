@@ -1,0 +1,8 @@
+<div class="button_list">
+  <div class="flex btn" (click)="handleAction(item.event)" *ngFor="let item of buttonList">
+    <eo-iconpark-icon class="mr5" name="{{item.icon}}" size="14px"></eo-iconpark-icon>
+    <span>{{ item.label }}</span>
+  </div>
+</div>
+<nz-code-editor [(ngModel)]="$$code" style="min-height: 100px;" [nzEditorOption]="editorOption"
+  (nzEditorInitialized)="onEditorInitialized($event)"></nz-code-editor>

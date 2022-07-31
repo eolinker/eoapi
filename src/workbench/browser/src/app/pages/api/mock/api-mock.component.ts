@@ -121,6 +121,7 @@ export class ApiMockComponent implements OnInit, OnChanges {
 
   /**
    * create mock
+   *
    * @param mock
    * @returns
    */
@@ -137,6 +138,7 @@ export class ApiMockComponent implements OnInit, OnChanges {
   }
   /**
    * update mock
+   *
    * @param mock
    * @returns
    */
@@ -154,6 +156,7 @@ export class ApiMockComponent implements OnInit, OnChanges {
 
   /**
    * remove mock
+   *
    * @param mock
    * @returns
    */
@@ -171,6 +174,7 @@ export class ApiMockComponent implements OnInit, OnChanges {
 
   /**
    * create mock object data
+   *
    * @param options
    * @returns
    */
@@ -235,7 +239,7 @@ export class ApiMockComponent implements OnInit, OnChanges {
   async handleSave() {
     this.isVisible = false;
 
-    if (this.currentEditMock.createWay === 'system') return;
+    if (this.currentEditMock.createWay === 'system') {return;}
 
     if (this.isEdit) {
       await this.updateMock(this.currentEditMock, Number(this.currentEditMock.uuid));

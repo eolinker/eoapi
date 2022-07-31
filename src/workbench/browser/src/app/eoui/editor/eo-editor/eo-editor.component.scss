@@ -8,6 +8,7 @@
   border-top-right-radius: 3px;
   width: 100%;
   display: flex;
+  font-size: 12px;
   align-items: center;
   padding-left: 10px;
   nz-select {
@@ -16,7 +17,7 @@
   .btn {
     display: inline-flex;
     align-items: center;
-    height: 50px;
+    height: 30px;
     padding: 10px;
     cursor: pointer;
     background-color: var(--MAIN_BG);
@@ -30,7 +31,7 @@
   }
 }
 
- ::ng-deep eo-editor {
+::ng-deep eo-editor {
   height: 100%;
   & > div {
     height: 100%;
@@ -40,7 +41,7 @@
   }
   .ace-editor {
     height: calc(100% - 52px);
-    min-height:inherit;
+    min-height: inherit;
     overflow: auto;
     &::-webkit-scrollbar {
       width: 0;

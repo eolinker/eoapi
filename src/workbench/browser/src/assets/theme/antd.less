@@ -1,6 +1,7 @@
 // Custom Theming for NG-ZORRO
 // For more information: https://ng.ant.design/docs/customize-theme/en
 @import '../../../node_modules/ng-zorro-antd/ng-zorro-antd.less';
+@import '../../../node_modules/ng-zorro-antd/code-editor/style/entry.less';
 
 // Override less variables to here
 // View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
@@ -8,18 +9,18 @@
 @border-radius-base: 3px;
 @primary-color: @theme-color;
 @success-color: @theme-color;
-@link-color:rgba(0, 0, 0, 0.8);
+@link-color:rgba (0, 0, 0, 0.8);
 @processing-color: @theme-color;
 @tree-title-height: 30px;
 body {
   line-height: initial;
 }
 // .ant-message-notice-content {
-  // background-color: @theme-color;
-  // color: #fff;
-  // .ant-message-success .anticon {
-  //   color: #fff;
-  // }
+// background-color: @theme-color;
+// color: #fff;
+// .ant-message-success .anticon {
+//   color: #fff;
+// }
 // }
 .ant-drawer {
   .ant-drawer-content-wrapper {
@@ -35,14 +36,14 @@ body {
   }
 }
 .eo_collapse {
+  margin-top: 10px;
   .ant-collapse-item {
     .ant-collapse-header {
-      border-left: 3px solid var(--MAIN_THEME_COLOR);
       background-color: var(--TABLE_HEADER_BG);
       padding: 5px 10px 5px 12px;
     }
     .ant-collapse-content > .ant-collapse-content-box {
-      padding: 0;
+      padding: 0 0 40px 0;
     }
   }
 }
@@ -64,15 +65,23 @@ body {
 }
 .ant-modal-footer {
   text-align: left;
+  padding: 16px 24px;
 }
 p {
   margin-bottom: 0;
+}
+.ant-btn {
+  border-radius: 3px !important;
 }
 .ant-btn.ant-dropdown-trigger {
   width: 20px;
 }
 .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
   background-color: var(--NAVBAR_BTN_BG);
+}
+.ant-tabs-tab {
+  font-weight: bold;
+  color: #999;
 }
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
   text-shadow: none;

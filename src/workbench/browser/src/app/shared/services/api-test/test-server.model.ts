@@ -4,7 +4,7 @@ export interface ApiTestRes {
   id: number;
   response: ApiTestHistoryResponse | any;
   report?: any;
-  globals?: Object;
+  globals?: object;
   general?: ApiTestResGeneral;
   history?: ApiTestHistoryFrame | any;
 }
@@ -18,7 +18,7 @@ export interface TestServer {
 
 export interface requestDataOpts {
   env: Environment | any;
-  globals: Object;
+  globals: object;
   beforeScript: string;
   afterScript: string;
   lang: string;

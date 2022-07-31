@@ -81,6 +81,7 @@ angular.module('eolinker').component('listBlockCommonComponent', {
       </div>
   </div>
   <div class="wrap_table_container_lbcc"
+  ng-style="$ctrl.wrapStyle"
       ng-class="{'had_select_drag_wrap_lbcc':$ctrl.mainObject.setting.draggableWithSelect,'drag_wrap_lbcc':$ctrl.mainObject.setting.draggable&&$ctrl.list.length,'drag_wrap_without_data_lbcc':$ctrl.mainObject.setting.draggable&&!$ctrl.list.length}">
       <div class="thead_div_wrap">
           <div class="thead-div" inner-html-common-directive remove=true html="$ctrl.data.thHtml"
@@ -117,6 +118,7 @@ angular.module('eolinker').component('listBlockCommonComponent', {
   bindings: {
     otherObject: '=',
     authorityObject: '<',
+    wrapStyle: '<',
     mainObject: '<',
     list: '=',
     activeObject: '=',
@@ -1732,7 +1734,7 @@ function listBlockController($rootScope, $element, $scope) {
         tmpHtml += `<div class="checkbox-td td-tbd va-top-td-tbd {{class}}" $_filter_expression ${
           inputVal.itemExpression || ''
         }>
-                    <span ${inputVal.checkboxExpression} 
+                    <span ${inputVal.checkboxExpression}
                      class="${
                        inputVal.itemDisabledExpression ? `{{${inputVal.itemDisabledExpression}}}` : 'input-checkbox'
                      } eo-checkbox iconfont ${inputVal.thKey ? 'inline_cth' : 'block_cth'}"
@@ -2035,8 +2037,8 @@ function listBlockController($rootScope, $element, $scope) {
       vm.mainObject.setting && vm.mainObject.setting.dataType === 'object'
         ? '$ctrl.list'
         : `$ctrl.list.slice(0,${vm.data.MAX_OMIT_LIST_LENTH}*$ctrl.data.listPartIndex)`
-    } track by $index" 
-                ${vm.data.isDepth ? `ng-hide="item.isHide" ng-if="!item.isHide"` : ''} 
+    } track by $index"
+                ${vm.data.isDepth ? `ng-hide="item.isHide" ng-if="!item.isHide"` : ''}
                 sv-group-element="$ctrl.data.sortForm" eo-attr-index="{{$index}}" eo-attr-depth="{{item.listDepth}}"  {{trExpression}}>`;
     try {
       tmp.html = tmp.html.replace('{{trExpression}}', vm.mainObject.setting.trExpression || '');

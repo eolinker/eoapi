@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ApiTestQuery } from '../../../shared/services/api-test/api-test-params.model';
-import { ApiTestHistory } from '../../../shared/services/storage/index.model';
-import { treeToListHasLevel } from '../../../utils/tree/tree.utils';
-import { text2UiData } from '../../../utils/data-transfer/data-transfer.utils';
+import { ApiTestHeaders, ApiTestQuery, ContentTypeByAbridge } from '../../../shared/services/api-test/api-test.model';
+import { ApiBodyType, ApiTestHistory } from '../../../shared/services/storage/index.model';
+import { uiData2Json, text2UiData, json2XML } from '../../../utils/data-transfer/data-transfer.utils';
 
 @Injectable()
 export class ApiTestService {
-  globalStorageKey= 'EO_TEST_VAR_GLOBALS';
+  globalStorageKey = 'EO_TEST_VAR_GLOBALS';
   constructor() {}
   initListConf(opts) {
     opts.title = opts.title || $localize`Param`;
@@ -143,12 +142,13 @@ export class ApiTestService {
   }
   /**
    * URL and Query transfer each other
+   *
    * @description Add query to URL and read query form url
-   * @param {string} url - whole url include query
-   * @param {object} query - ui query param
-   * @param {string} opts.base - based on which,url or query,delete no exist and replace same
-   * @param {string} opts.replaceType - replace means only keep replace array,merge means union
-   * @returns {object} - {url:"",query:[]}
+   * @param url - whole url include query
+   * @param query - ui query param
+   * @param opts.base - based on which,url or query,delete no exist and replace same
+   * @param opts.replaceType - replace means only keep replace array,merge means union
+   * @returns - {url:"",query:[]}
    */
   transferUrlAndQuery(
     url,
@@ -158,42 +158,48 @@ export class ApiTestService {
       replaceType: 'replace',
     }
   ) {
-    let urlQuery = [];
-    let uiQuery = query;
-    // get url query
+    const urlQuery = [];
+    const uiQuery = query;
+    //Get url query
     new URLSearchParams(url.split('?').slice(1).join('?')).forEach((val, name) => {
-      let item: ApiTestQuery = {
-        name: name,
+      const item: ApiTestQuery = {
+        name,
         required: true,
         value: val,
       };
       urlQuery.push(item);
     });
-    //get replace result
-    let origin = opts.base === 'url' ? uiQuery : urlQuery,
-      replace = opts.base === 'url' ? urlQuery : uiQuery;
-    if (opts.replaceType === 'replace') origin.forEach((val) => (val.required = false));
-    let result = [...replace, ...origin];
-    for (var i = 0; i < result.length; ++i) {
-      for (var j = i + 1; j < result.length; ++j) {
-        if (result[i].name === result[j].name) result.splice(j--, 1);
+    //Get replace result
+    const origin = opts.base === 'url' ? uiQuery : urlQuery;
+    const replace = opts.base === 'url' ? urlQuery : uiQuery;
+    if (opts.replaceType === 'replace') {
+      origin.forEach((val) => (val.required = false));
+    }
+    const result = [...replace, ...origin];
+    for (let i = 0; i < result.length; ++i) {
+      for (let j = i + 1; j < result.length; ++j) {
+        if (result[i].name === result[j].name) {
+          result.splice(j--, 1);
+        }
       }
     }
-    //joint query
+    //Joint query
     let search = '';
     result.forEach((val) => {
-      if (!val.name || !val.required) return;
+      if (!val.name || !val.required) {
+        return;
+      }
       search += `${val.name}=${val.value === undefined ? val.example : val.value}&`;
     });
     search = search ? `?${search.slice(0, -1)}` : '';
     url = `${url.split('?')[0]}${search}`;
     return {
-      url: url,
+      url,
       query: result,
     };
   }
   getHTTPStatus(statusCode) {
-    let HTTP_CODE_STATUS = [
+    const HTTP_CODE_STATUS = [
       {
         status: 'info',
         cap: 199,
@@ -228,15 +234,15 @@ export class ApiTestService {
     return HTTP_CODE_STATUS.find((val) => statusCode <= val.cap);
   }
   getTestDataFromHistory(inData: ApiTestHistory) {
-    let result = {
+    console.log(inData);
+    const result = {
       testData: {
         uuid: inData.apiDataID,
         queryParams: [],
         restParams: [],
-        requestBody:
-          inData.request.requestBodyType === 'raw'
-            ? inData.request.requestBody
-            : inData.request.requestBody.map((val) => (val.required = true)),
+        requestBody: [ApiBodyType.Raw, ApiBodyType.Binary].includes(inData.request.requestBodyType as ApiBodyType)
+          ? inData.request.requestBody
+          : inData.request.requestBody.map((val) => (val.required = true)),
         requestHeaders: inData.response.headers,
         ...inData.request,
       },
@@ -246,35 +252,40 @@ export class ApiTestService {
   }
   /**
    * Transfer test data/test history to api data
-   * @param {ApiTestHistory} inData.history
+   *
+   * @param inData.history
    * @param inData.testData - test request info
-   * @returns {ApiData}
+   * @returns
    */
   getApiFromTestData(inData) {
-    let testToEditParams = (arr) => {
-      let result = [];
+    const testToEditParams = (arr) => {
+      const result = [];
       arr.forEach((val) => {
-        if (!val.name) return;
-        let item = { ...val, example: val.value };
+        if (!val.name) {
+          return;
+        }
+        const item = { ...val, example: val.value };
         delete item.value;
         result.push(item);
       });
       return result;
     };
-    let result = {
+    const result = {
       ...inData.testData,
-      responseHeaders: inData.history.response.headers||[],
+      responseHeaders: inData.history.response.headers || [],
       responseBodyType: 'json',
       responseBodyJsonType: 'object',
       responseBody: [],
     };
     delete result.uuid;
     ['requestHeaders', 'requestBody', 'restParams', 'queryParams'].forEach((keyName) => {
-      if (!result[keyName] || typeof result[keyName] !== 'object') return;
+      if (!result[keyName] || typeof result[keyName] !== 'object') {
+        return;
+      }
       result[keyName] = testToEditParams(result[keyName]);
     });
     if (inData.history.response.responseType === 'text') {
-      let bodyInfo = text2UiData(inData.history.response.body);
+      const bodyInfo = text2UiData(inData.history.response.body);
       result.responseBody = bodyInfo.data;
       result.responseBodyType = bodyInfo.textType;
       result.responseBodyJsonType = bodyInfo.rootType;
@@ -282,7 +293,7 @@ export class ApiTestService {
     return result;
   }
   getTestDataFromApi(inData) {
-    let editToTestParams = (arr) => {
+    const editToTestParams = (arr) => {
       arr = arr || [];
       arr.forEach((val) => {
         val.value = val.example;
@@ -293,7 +304,7 @@ export class ApiTestService {
       editToTestParams(inData[keyName]);
     });
     //handle query and url
-    let tmpResult = this.transferUrlAndQuery(inData.uri, inData.queryParams, {
+    const tmpResult = this.transferUrlAndQuery(inData.uri, inData.queryParams, {
       base: 'url',
       replaceType: 'merge',
     });
@@ -301,38 +312,23 @@ export class ApiTestService {
     inData.queryParams = tmpResult.query;
     //parse body
     switch (inData.requestBodyType) {
-      case 'json':
-      case 'xml': {
-        inData.requestBody = treeToListHasLevel(inData.requestBody, {
-          listDepth: 0,
-          mapItem: (val) => {
-            let typeSorts = [
-              {
-                type: 'string',
-                match: ['file', 'date', 'datetime', 'char', 'byte'],
-              },
-              {
-                type: 'number',
-                match: ['int', 'float', 'double', 'short', 'long'],
-              },
-              {
-                type: 'object',
-                match: ['json'],
-              },
-            ];
-            typeSorts.some((typeItem) => {
-              if (typeItem.match.includes(val.type)) {
-                val.type = typeItem.type;
-                return true;
-              }
-            });
-            val.value = val.example;
-            return val;
-          },
-        });
+      case ApiBodyType.JSON: {
+        inData.requestBody = JSON.stringify(
+          uiData2Json(inData.requestBody, {
+            defaultValueKey: 'example',
+          })
+        );
         break;
       }
-      case 'formData': {
+      case ApiBodyType.XML: {
+        inData.requestBody = json2XML(
+          uiData2Json(inData.requestBody, {
+            defaultValueKey: 'example',
+          })
+        );
+        break;
+      }
+      case ApiBodyType['Form-data']: {
         inData.requestBody.forEach((val) => {
           val.value = val.example;
           val.type = val.type === 'file' ? 'file' : 'string';
@@ -340,11 +336,48 @@ export class ApiTestService {
         });
         break;
       }
+      case ApiBodyType.Binary:{
+        inData.requestBody='';
+        break;
+      }
+    }
+    if (['json', 'xml'].includes(inData.requestBodyType)) {
+      //Add/Replace Content-type
+      const contentType: ContentTypeByAbridge =
+        inData.requestBodyType === 'xml' ? ContentTypeByAbridge.XML : ContentTypeByAbridge.JSON;
+      inData.requestHeaders = this.addOrReplaceContentType(contentType, inData.requestHeaders);
+      //Xml、Json change content-type to raw in test page
+      inData.requestBodyType = 'raw';
     }
     return inData;
   }
-  getGlobals() {
-    let result = '{}';
+  getContentType(headers) {
+    const existHeader = headers.find((val) => val.name.toLowerCase() === 'content-type');
+    if (!existHeader) {
+      return;
+    }
+    return existHeader.value;
+  }
+  /**
+   * @param type content-type be added/replaced
+   * @param headers
+   */
+  addOrReplaceContentType(contentType: ContentTypeByAbridge, headers: ApiTestHeaders[] = []) {
+    const result = headers;
+    const existHeader = headers.find((val) => val.name.toLowerCase() === 'content-type');
+    if (existHeader) {
+      existHeader.value = contentType;
+      return result;
+    }
+    headers.unshift({
+      required: true,
+      name: 'content-type',
+      value: contentType,
+    });
+    return result;
+  }
+  getGlobals(): object {
+    let result = {};
     const global = localStorage.getItem(this.globalStorageKey);
     try {
       result = JSON.parse(global);
@@ -352,7 +385,9 @@ export class ApiTestService {
     return result;
   }
   setGlobals(globals) {
-    if(!globals) return;
+    if (!globals) {
+      return;
+    }
     localStorage.setItem(this.globalStorageKey, JSON.stringify(globals));
   }
 }

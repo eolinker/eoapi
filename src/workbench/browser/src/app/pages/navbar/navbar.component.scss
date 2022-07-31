@@ -1,10 +1,14 @@
 .btn {
   border-radius: 3px;
-  background-color: var(--BTN_PRIMARY_BG);
-  color: #fff;
+  background-color: rgba(0,120,90, .2);
+  color: #333;
   font-size: 0.9em;
+  font-weight: 500;
   height: 30px;
   cursor: pointer;
+  .delete-icon {
+    color: var(--BTN_PRIMARY_BG);
+  }
 }
 .icon {
   -webkit-app-region: no-drag;
@@ -36,8 +40,7 @@
   border-bottom: 1px solid var(--BORDER);
   height: var(--NAVBAR_HEIGHT);
   .logo {
-    width: 120px;
-    margin-left: 10px;
+    width: 90px;
   }
   .tips_wrap {
     position: relative;

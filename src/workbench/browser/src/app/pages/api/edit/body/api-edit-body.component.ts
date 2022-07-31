@@ -16,7 +16,10 @@ import { ApiEditService } from '../api-edit.service';
   styleUrls: ['./api-edit-body.component.scss'],
 })
 export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() model: string | object[] | any;
+  @Input() model: string | object[] | any = `import { NzCodeEditorModule } from 'ng-zorro-antd/code-editor'
+
+  @Component({})
+  export class SomeComponent {}`;
   @Input() supportType: string[];
   @Input() bodyType: ApiBodyType | string;
   @Input() jsonRootType: JsonRootType | string;
@@ -24,7 +27,8 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
   @Output() bodyTypeChange: EventEmitter<any> = new EventEmitter();
   @Output() modelChange: EventEmitter<any> = new EventEmitter();
   listConf: any = {};
-  cache: object = {};
+  cache: any = {};
+
   CONST: any = {
     JSON_ROOT_TYPE: Object.keys(JsonRootType).map((val) => ({ key: val, value: JsonRootType[val] })),
   };
@@ -44,15 +48,17 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
       this.beforeChangeBodyByType(val[0]);
     });
     this.initListConf();
-    this.rawChange$.pipe(debounceTime(700), takeUntil(this.destroy$)).subscribe(() => {
+    this.rawChange$.pipe(debounceTime(500), takeUntil(this.destroy$)).subscribe(() => {
       this.modelChange.emit(this.model);
     });
   }
   beforeChangeBodyByType(type) {
     switch (type) {
+      case ApiBodyType.Binary:
       case ApiBodyType.Raw: {
-        // case ApiBodyType.Binary:
-        if (typeof this.model !== 'string') return;
+        if (typeof this.model !== 'string') {
+          return;
+        }
         this.cache[type] = this.model || '';
         break;
       }
@@ -70,7 +76,9 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
     this.bodyTypeChange.emit(this.bodyType);
     this.setListConf();
     this.setModel();
-    if (type === 'init') return;
+    if (type === 'init') {
+      return;
+    }
     this.modelChange.emit(this.model);
   }
   ngOnInit(): void {
@@ -84,8 +92,8 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
   }
   ngOnChanges(changes) {
     if (
-      (changes.model && !changes.model.previousValue && changes.model.currentValue) ||
-      changes.model.currentValue?.length === 0
+      changes.model &&
+      ((!changes.model.previousValue && changes.model.currentValue) || changes.model.currentValue?.length === 0)
     ) {
       this.beforeChangeBodyByType(this.bodyType);
       this.changeBodyType('init');
@@ -107,8 +115,8 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
    */
   private setModel() {
     switch (this.bodyType) {
+      case ApiBodyType.Binary:
       case ApiBodyType.Raw: {
-        // case ApiBodyType.Binary:
         this.model = this.cache[this.bodyType] || '';
         break;
       }
@@ -132,7 +140,7 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
 
   private setListConf() {
     // reset table config
-    this.listConf.setting = Object.assign({}, this.cache['listConfSetting']);
+    this.listConf.setting = Object.assign({}, this.cache.listConfSetting);
     const typeIndex = this.listConf.tdList.findIndex((val) => val.mark === 'type');
     let TYPE_CONST: any = [];
     switch (this.bodyType) {
@@ -172,6 +180,6 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
         this.modelChange.emit(this.model);
       },
     });
-    this.cache['listConfSetting'] = Object.assign({}, this.listConf.setting);
+    this.cache.listConfSetting = Object.assign({}, this.listConf.setting);
   }
 }

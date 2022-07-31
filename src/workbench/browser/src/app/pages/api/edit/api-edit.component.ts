@@ -148,17 +148,17 @@ export class ApiEditComponent implements OnInit, OnDestroy {
     this.initBasicForm();
     //recovery from tab
     if (this.apiTab.currentTab && this.apiTab.tabCache[this.apiTab.tabID]) {
-      let tabData = this.apiTab.tabCache[this.apiTab.tabID];
+      const tabData = this.apiTab.tabCache[this.apiTab.tabID];
       this.apiData = tabData.apiData;
       return;
     }
     if (!id) {
-      let tmpApiData = window.sessionStorage.getItem('apiDataWillbeSave');
+      const tmpApiData = window.sessionStorage.getItem('apiDataWillbeSave');
       if (tmpApiData) {
         //Add From Test|Copy Api
         window.sessionStorage.removeItem('apiDataWillbeSave');
         Object.assign(this.apiData, JSON.parse(tmpApiData));
-        console.log(this.apiData)
+        console.log(this.apiData);
         this.validateForm.patchValue(this.apiData);
       } else {
         //Add directly

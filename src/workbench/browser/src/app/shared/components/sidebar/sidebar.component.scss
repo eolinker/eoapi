@@ -21,11 +21,6 @@
   color: rgba(0,0,0,0.5);
   &:hover {
     background-color: var(--SEC_BG);
-    // background-color: var(--SIDEBAR_BG_HOVER);
-    // color: var(--TEXT_ACTIVE);
-  }
-  i.icon {
-    font-size: 1.6em;
   }
   &.sidebar_item_active {
     background-color: var(--SEC_BG);

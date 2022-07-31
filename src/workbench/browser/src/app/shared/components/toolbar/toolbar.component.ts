@@ -13,7 +13,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   showThemeDrawer = false;
   sideBarCollapsed: boolean;
   private destroy$: Subject<void> = new Subject<void>();
-  constructor(private sidebar: SidebarService) {
+  constructor(public sidebar: SidebarService) {
     this.sideBarCollapsed = this.sidebar.getCollapsed();
     this.sidebar
       .onCollapsedChanged()

@@ -1,4 +1,4 @@
-import { assert } from 'console';
+import * as monaco from 'monaco-editor';
 
 export type Note = {
   code?: string;
@@ -22,13 +22,13 @@ export interface FlatNode extends TreeNode {
   disabled: boolean;
 }
 const generateEoExcuteSnippet = (bodyType) => {
-  let variableByBodyType = {
+  const variableByBodyType = {
     formdata: {
       id: 'formdata',
       name: 'FORM-DATA',
       contentType: 'application/x-www-form-urlencoded',
       bodyType: 'form-data',
-      body: `{ 
+      body: `{
      "param_1": "value_1",
      "param_2": "value_2"
      }`,
@@ -38,7 +38,7 @@ const generateEoExcuteSnippet = (bodyType) => {
       name: 'JSON',
       contentType: 'application/json',
       bodyType: 'json',
-      body: `{ 
+      body: `{
      "param_1": "value_1",
      "param_2": "value_2"
      }`,
@@ -70,9 +70,9 @@ const generateEoExcuteSnippet = (bodyType) => {
     },
   };
 
-  let variables = variableByBodyType[bodyType];
+  const variables = variableByBodyType[bodyType];
   // Because i18n compile complex line error,safe way
-  let localizes = {
+  const localizes = {
     apidefind: $localize`API Definite`,
     url: $localize`[Required][string] Request url`,
     name: $localize`[Required][string] API name,for report detail`,
@@ -85,11 +85,11 @@ const generateEoExcuteSnippet = (bodyType) => {
     info: $localize`Print info`,
     infoError: $localize`Print error info`,
   };
-  let result = `//${localizes.apidefind}
+  const result = `//${localizes.apidefind}
   var ${variables.id}_api_demo_1 = {
       "url": "https://api.eolink.com", //${localizes.url}
       "name": "${variables.name} API Demo", //${localizes.name}
-      "method": "POST", 
+      "method": "POST",
       "headers": {
           "Content-Type": "${variables.contentType}"
       }, //${localizes.header}
@@ -336,7 +336,7 @@ const COMMON_DATA: TreeNode[] = [
     name: $localize`Encryption and Decryption`,
     children: [
       {
-        name:`MD5`,
+        name: `MD5`,
         caption: 'eo.crypt.md5',
         value: 'eo.crypt.md5(data)',
         note: {
@@ -688,7 +688,7 @@ export const BEFORE_DATA: TreeNode[] = [
       },
 
       {
-        name: $localize`Request body[Form-data/JSON/XML]`,
+        name: $localize`Request body[Form-data]`,
         caption: 'eo.http.bodyParseParam',
         value: 'eo.http.bodyParseParam',
       },
@@ -777,10 +777,14 @@ export const AFTER_DATA: TreeNode[] = [
   ...COMMON_DATA,
 ];
 
-export const beforeScriptCompletions: Completion[] = BEFORE_DATA.flatMap((n) => n.children).reduce((prev, curr) => {
+export const beforeScriptCompletions: any[] = BEFORE_DATA.flatMap((n) => n.children).reduce((prev, curr) => {
   const { caption, value } = curr;
   if (caption) {
-    prev.push({ caption, value });
+    prev.push({
+      label: caption,
+      insertText: value,
+      kind: monaco.languages.CompletionItemKind.Function,
+    });
   }
   return prev;
 }, []);
@@ -788,7 +792,11 @@ export const beforeScriptCompletions: Completion[] = BEFORE_DATA.flatMap((n) => 
 export const afterScriptCompletions: Completion[] = AFTER_DATA.flatMap((n) => n.children).reduce((prev, curr) => {
   const { caption, value } = curr;
   if (caption) {
-    prev.push({ caption, value });
+    prev.push({
+      label: caption,
+      insertText: value,
+      kind: monaco.languages.CompletionItemKind.Function,
+    });
   }
   return prev;
 }, []);

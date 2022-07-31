@@ -1,5 +1,5 @@
-<div class="flex eo-api-script">
-  <div class="w-[300px] h-[322px] overflow-auto">
+<div class="flex w-full eo-api-script">
+  <div class="w-[300px] overflow-auto border-0 border-r-[1px] border-solid border-[#f0f0f0]">
     <div class="flex justify-between p-3">
       <div i18n>Snippets</div>
       <div>
@@ -42,9 +42,10 @@
       </ng-template>
     </ng-template>
   </div>
-  <div class="flex-1 h-[322px]">
-    <eo-editor [(code)]="code" editorType="javascript" [eventList]="['format', 'copy', 'search', 'replace']"
-      (codeChange)="handleChange($event)" [completions]="completions" [minHeight]="270">
-    </eo-editor>
+  <div class="flex-1 overflow-hidden">
+    <eo-monaco-editor [(code)]="code" [config]="{language: 'javascript'}"
+      [eventList]="['format', 'copy', 'search', 'replace']" (codeChange)="handleChange($event)"
+      [completions]="completions">
+    </eo-monaco-editor>
   </div>
 </div>

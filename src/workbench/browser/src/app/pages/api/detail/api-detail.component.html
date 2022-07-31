@@ -1,50 +1,70 @@
 <section class="detail_page">
-  <div class="t-1">
+  <div class="mt-4">
     <nz-tag [nzColor]="'#108ee9'">{{ apiData.protocol | uppercase }}</nz-tag>
     <nz-tag [nzColor]="'#0aa07a'">{{ apiData.method | uppercase }}</nz-tag>
-    <span class="mt10 dp_b text_omit">{{ apiData.uri }}</span>
+    <span class="mt-2.5 dp_b text_omit">{{ apiData.uri }}</span>
   </div>
   <p class="api_name text_omit">{{ apiData.name }}</p>
-  <div *ngIf="apiData.requestHeaders && apiData.requestHeaders.length">
-    <p class="api_line" i18n>Request Headers</p>
-    <eo-api-detail-header [model]="apiData.requestHeaders"></eo-api-detail-header>
-  </div>
-  <div *ngIf="apiData.queryParams && apiData.queryParams.length">
-    <p class="api_line" i18n>Query</p>
-    <eo-api-detail-query [model]="apiData.queryParams"></eo-api-detail-query>
-  </div>
-  <div *ngIf="apiData.restParams && apiData.restParams.length">
-    <p class="api_line" i18n>REST</p>
-    <eo-api-detail-rest [model]="apiData.restParams"></eo-api-detail-rest>
-  </div>
-  <div *ngIf="apiData.requestBody?.length">
-    <div class="api_line">
-      <span i18n>Body</span>
-      <nz-tag class="ml10" nzColor="default">{{ CONST.BODY_TYPE[apiData.requestBodyType] }}</nz-tag>
-      <nz-tag *ngIf="apiData.requestBodyType === 'json'" nzColor="default" i18n
-        >The outermost structure is: {{ CONST.JSON_ROOT_TYPE[apiData.requestBodyJsonType] }}</nz-tag
-      >
-    </div>
-    <eo-api-detail-body
-      [bodyType]="apiData.requestBodyType"
-      [model]="apiData.requestBody"
-      [jsonRootType]="apiData.requestBodyJsonType"
-    ></eo-api-detail-body>
-  </div>
-  <div *ngIf="apiData.responseHeaders && apiData.responseHeaders.length">
-    <p class="api_line" i18n>Response Headers</p>
-    <eo-api-detail-header [model]="apiData.responseHeaders"></eo-api-detail-header>
-  </div>
-  <div *ngIf="apiData.responseBody && apiData.responseBody.length">
-    <p class="api_line" i18n>Response</p>
-    <eo-api-detail-body
-      [bodyType]="apiData.responseBodyType"
-      [model]="apiData.responseBody"
-      [jsonRootType]="apiData.responseBodyJsonType"
-    ></eo-api-detail-body>
-  </div>
-  <div *ngIf="isElectron">
-    <p class="api_line">MOCK</p>
-    <eo-api-detail-mock [apiData]="apiData"></eo-api-detail-mock>
-  </div>
+  <!-- Request headers -->
+  <nz-collapse *ngIf="apiData.requestHeaders && apiData.requestHeaders.length" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Request Headers">
+      <eo-api-detail-header class="flex pt-2.5" [model]="apiData.requestHeaders"></eo-api-detail-header>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <!-- Query params -->
+  <nz-collapse *ngIf="apiData.queryParams && apiData.queryParams.length" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Query">
+      <eo-api-detail-header class="flex pt-2.5" [model]="apiData.queryParams"></eo-api-detail-header>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <!-- Rest params -->
+  <nz-collapse *ngIf="apiData.restParams && apiData.restParams.length" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="REST">
+      <eo-api-detail-header class="flex pt-2.5" [model]="apiData.restParams"></eo-api-detail-header>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <!-- Body -->
+  <nz-collapse *ngIf="apiData.requestBody?.length" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Body">
+      <div class="my-2.5">
+        <nz-tag nzColor="default">{{ CONST.BODY_TYPE[apiData.requestBodyType] }}</nz-tag>
+        <nz-tag *ngIf="apiData.requestBodyType === 'json'" nzColor="default" i18n
+          >The outermost structure is: {{ CONST.JSON_ROOT_TYPE[apiData.requestBodyJsonType] }}</nz-tag
+        >
+      </div>
+      <eo-api-detail-body
+        [bodyType]="apiData.requestBodyType"
+        [model]="apiData.requestBody"
+        [jsonRootType]="apiData.requestBodyJsonType"
+      ></eo-api-detail-body>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <!-- Response headers -->
+  <nz-collapse *ngIf="apiData.responseHeaders && apiData.responseHeaders.length" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Response Headers">
+      <eo-api-detail-header class="flex pt-2.5" [model]="apiData.responseHeaders"></eo-api-detail-header>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <!-- Response -->
+  <nz-collapse *ngIf="apiData.responseBody?.length" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Response">
+      <div class="my-2.5">
+        <nz-tag nzColor="default">{{ CONST.BODY_TYPE[apiData.responseBodyType] }}</nz-tag>
+        <nz-tag *ngIf="apiData.responseBodyType === 'json'" nzColor="default" i18n
+          >The outermost structure is: {{ CONST.JSON_ROOT_TYPE[apiData.responseBodyJsonType] }}</nz-tag
+        >
+      </div>
+      <eo-api-detail-body
+        [bodyType]="apiData.responseBodyType"
+        [model]="apiData.responseBody"
+        [jsonRootType]="apiData.responseBodyJsonType"
+      ></eo-api-detail-body>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <!-- MOCK -->
+  <nz-collapse *ngIf="isElectron" class="eo_collapse" [nzGhost]="true">
+    <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="MOCK">
+      <eo-api-detail-mock class="flex pt-2.5" [apiData]="apiData"></eo-api-detail-mock>
+    </nz-collapse-panel>
+  </nz-collapse>
 </section>

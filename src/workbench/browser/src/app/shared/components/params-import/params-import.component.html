@@ -1,6 +1,6 @@
 <span class="menu" (click)="showModal('json')">
-  <i class="fs24 iconfont icon-daoru"></i>
-  <span i18n>Import</span>
+  <eo-iconpark-icon name="afferent-three" size="14px"></eo-iconpark-icon>
+  <span class="fs12 ml5" i18n>Import</span>
 </span>
 
 <!-- <span class="menu" nz-dropdown [nzDropdownMenu]="menu">
@@ -10,24 +10,16 @@
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <ul nz-menu nzSelectable>
     <li nz-menu-item (click)="showModal('json')">JSON</li>
-    <li nz-menu-item>JSON Schame</li> 
+    <li nz-menu-item>JSON Schame</li>
   </ul>
 </nz-dropdown-menu> -->
 
-<nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="'导入' + (modalTitle || contentTypeTitle)"
-  [nzStyle]="{ width: '800px' }"
-  (nzOnCancel)="handleCancel()"
->
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="'导入' + (modalTitle || contentTypeTitle)" [nzStyle]="{ width: '800px' }"
+  (nzOnCancel)="handleCancel()">
   <div *nzModalContent>
     <pre class="eg" i18n>Import like this:<br />{{ eg }}</pre>
-    <eo-editor
-      [(code)]="paramCode"
-      [editorType]="contenTypeEditor"
-      [hiddenList]="['type']"
-      [eventList]="['type', 'format', 'copy', 'search', 'replace']"
-    ></eo-editor>
+    <eo-editor [(code)]="paramCode" [editorType]="contenTypeEditor" [hiddenList]="['type']"
+      [eventList]="['type', 'format', 'copy', 'search', 'replace']"></eo-editor>
   </div>
   <div *nzModalFooter style="text-align: left">
     <button nz-button nzType="default" (click)="handleImport('mixin')" i18n>Replace Changed</button>

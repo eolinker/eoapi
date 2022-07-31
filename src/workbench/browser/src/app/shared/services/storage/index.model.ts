@@ -6,30 +6,35 @@ import { Observable } from 'rxjs';
 interface StorageModel {
   /**
    * 主键UUID，字符串UUID或数值型
+   *
    * @type {string|number}
    */
   uuid?: string | number;
 
   /**
    * 名称
+   *
    * @type {string}
    */
   name?: string;
 
   /**
    * 备注信息
+   *
    * @type {string}
    */
   description?: string;
 
   /**
    * 创建时间，可为空
+   *
    * @type {Date}
    */
   createdAt?: Date;
 
   /**
    * 更新时间，可为空
+   *
    * @type {Date}
    */
   updatedAt?: Date;
@@ -41,24 +46,28 @@ interface StorageModel {
 export interface Environment extends StorageModel {
   /**
    * 名称
+   *
    * @type {string}
    */
   name: string;
 
   /**
    * 项目主键ID
+   *
    * @type {string|number}
    */
   projectID: string | number;
 
   /**
    * 前置url
+   *
    * @type {string}
    */
   hostUri: string;
 
   /**
    * 环境变量（可选）
+   *
    * @type {object}
    */
   parameters?: object;
@@ -70,24 +79,28 @@ export interface Environment extends StorageModel {
 export interface Group extends StorageModel {
   /**
    * 名称
+   *
    * @type {string}
    */
   name: string;
 
   /**
    * 项目主键ID
+   *
    * @type {string|number}
    */
   projectID: string | number;
 
   /**
    * 上级分组主键，最顶层是0
+   *
    * @type {string|number}
    */
   parentID?: string | number;
 
   /**
    * 分组排序号
+   *
    * @type {number}
    */
   weight?: number;
@@ -99,6 +112,7 @@ export interface Group extends StorageModel {
 export interface Project extends StorageModel {
   /**
    * 名称
+   *
    * @type {string}
    */
   name: string;
@@ -121,6 +135,7 @@ export interface ApiTestHistoryResponse {
 
 /**
  * General indicators
+ *
  * @type {object}
  */
 export interface ApiTestResGeneral {
@@ -157,6 +172,7 @@ export interface ApiTestResGeneral {
 export interface ApiTestHistoryFrame {
   /**
    * General indicators
+   *
    * @type {object}
    */
   general: {
@@ -192,6 +208,7 @@ export interface ApiTestHistoryFrame {
 
   /**
    * HTTP Request
+   *
    * @type {object}
    */
   request: {
@@ -206,6 +223,7 @@ export interface ApiTestHistoryFrame {
 
   /**
    * HTTP response
+   *
    * @type {object}
    */
   response: {
@@ -229,12 +247,14 @@ export interface ApiTestHistoryFrame {
 export interface ApiTestHistory extends ApiTestHistoryFrame, StorageModel {
   /**
    * Project primary key ID
+   *
    * @type {string|number}
    */
   projectID: string | number;
 
   /**
    * Bind API primary key ID
+   *
    * @type {string|number}
    */
   apiDataID: string | number;
@@ -247,12 +267,14 @@ export type ApiMockEntity = StorageModel & {
   url: string;
   /**
    * Project primary key ID
+   *
    * @type {string|number}
    */
   projectID: string | number;
 
   /**
    * Bind API primary key ID
+   *
    * @type {string|number}
    */
   apiDataID: string | number;
@@ -269,7 +291,7 @@ export enum ApiBodyType {
   JSON = 'json',
   XML = 'xml',
   Raw = 'raw',
-  // Binary = 'binary',
+  Binary = 'binary',
 }
 /**
  * Json Root Type
@@ -301,6 +323,7 @@ export enum RequestProtocol {
 export interface ApiData extends StorageModel {
   /**
    * name
+   *
    * @type {string}
    */
   name: string;
@@ -585,12 +608,14 @@ export interface StorageInterface {
   groupBulkLoad: (uuids: Array<number | string>) => Observable<object>;
   /**
    * Load all group items by projectID.
+   *
    * @param projectID
    */
   groupLoadAllByProjectID: (projectID: number | string) => Observable<object>;
   // Api Data
   /**
    * Create apiData item.
+   *
    * @param item
    */
   apiDataCreate: (item: ApiData) => Observable<object>;
@@ -598,40 +623,47 @@ export interface StorageInterface {
 
   /**
    * Bulk create apiData items.
+   *
    * @param items
    */
   apiDataBulkCreate: (items: Array<ApiData>) => Observable<object>;
 
   /**
    * Bulk update apiData items.
+   *
    * @param items
    */
   apiDataBulkUpdate: (items: Array<ApiData>) => Observable<object>;
   apiDataRemove: (uuid: number | string) => Observable<object>;
   /**
    * Bulk delete apiData items.
+   *
    * @param uuids
    */
   apiDataBulkRemove: (uuids: Array<number | string>) => Observable<object>;
   /**
    * Load apiData item with primary key.
+   *
    * @param uuid
    */
   apiDataLoad: (uuid: number | string) => Observable<object>;
   /**
    * Bulk load apiData items.
+   *
    * @param uuids
    */
   apiDataBulkLoad: (uuids: Array<number | string>) => Observable<object>;
 
   /**
    * Load all apiData items by projectID.
+   *
    * @param projectID
    */
   apiDataLoadAllByProjectID: (projectID: number | string) => Observable<object>;
 
   /**
    * Load all apiData items by groupID.
+   *
    * @param groupID
    */
 

@@ -7,8 +7,10 @@
 </div>
 <div class="p15" *ngIf="(model | json) !== '{}'">
   <!-- Status Bar -->
-  <div *ngIf="model.statusCode"
-    class="mb15 basic_info_bar cw f_row f_js {{ model.statusCode ? codeStatus.class : 'code_red' }}">
+  <div
+    *ngIf="model.statusCode"
+    class="mb15 basic_info_bar cw f_row f_js {{ model.statusCode ? codeStatus.class : 'code_red' }}"
+  >
     <div class="fs16" id="statusCode">{{ model.statusCode || 'No Response' }}</div>
     <div class="f_row_ac fs12">
       <span class="mr15" id="size">Size: {{ model.responseLength | byteToString }}</span>
@@ -16,30 +18,43 @@
     </div>
   </div>
   <!-- Test Alert Tip -->
-  <nz-alert class="eo_alert_bar" *ngFor="let item of model.reportList"
-    [nzType]="item.type === 'interrupt' ? 'error' : 'info'" [nzMessage]="item.content || item" nzShowIcon></nz-alert>
+  <nz-alert
+    class="eo_alert_bar"
+    *ngFor="let item of model.reportList"
+    [nzType]="item.type === 'interrupt' ? 'error' : 'info'"
+    [nzMessage]="item.content || item"
+    nzShowIcon
+  ></nz-alert>
   <!-- Response -->
   <div *ngIf="model.responseType" [ngSwitch]="model.responseType">
     <div class="text-center" *ngSwitchCase="'stream'">
-      <div *ngIf="!responseIsImg" i18n>
-        Unable to preview non-text type data, you can<button class="eo_theme_btn_default mlr5" type="button"
-          (click)="downloadResponseText()">
-          download back result</button>and open it with other programs.
+      <div *ngIf="!responseIsImg">
+        <span i18n>Unable to preview non-text type data, you can</span>
+        <button class="eo_theme_btn_default mlr5" type="button" (click)="downloadResponseText()" i18n="@@downloadResponse">
+          download back result
+        </button>
+        <span i18n>and open it with other programs.</span>
       </div>
       <!-- <div class="mt20" *ngIf="responseIsImg">
         <img class="maw_100percent" [src]="model.blobUrl" />
       </div> -->
     </div>
-    <div class="text-center" *ngSwitchCase="'longText'" i18n>
-      Unable to preview non-text type data, you can
-      <button class="eo_theme_btn_default mlr5" type="button" (click)="downloadResponseText()">
+    <div class="text-center" *ngSwitchCase="'longText'">
+      <span i18n>The response result exceeds the previewable size, you can</span>
+      <button i18n="@@downloadResponse" class="eo_theme_btn_default mlr5" type="button" (click)="downloadResponseText()">
         download back result
       </button>
       <!-- or
       <button class="eo_theme_btn_default" type="button" (click)="newTabResponseText()">在新标签页中显示返回结果</button>
       and open it with other programs. -->
     </div>
-    <eo-editor *ngSwitchDefault class="mt20" [autoFormat]="true" [(code)]="model.body" [config]="{maxLines: 10}"
-      [eventList]="['type', 'format', 'copy', 'download', 'newTab', 'search']"></eo-editor>
+    <eo-editor
+      *ngSwitchDefault
+      class="mt20"
+      [autoFormat]="true"
+      [(code)]="model.body"
+      [config]="{ maxLines: 10 }"
+      [eventList]="['type', 'format', 'copy', 'search']"
+    ></eo-editor>
   </div>
 </div>

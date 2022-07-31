@@ -5750,20 +5750,6 @@ online-service-global-component .editormd .editormd-menu > li > a {
   overflow: hidden;
 }
 
-/* 设置滚动条的样式 */
-::-webkit-scrollbar-track {
-  background: var(--SCROLL_BAR_BG);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--SCROLL_BAR);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
 
 .eo-input,
 .eo-textarea,
@@ -13144,6 +13130,7 @@ select-default-common-component .container-focus .list-container-div {
 select-default-common-component .input-text:focus + .list-container-div,
 select-default-common-component .container-div:focus-within .list-container-div {
   display: block;
+  position: fixed;
 }
 select-default-common-component .preview-text-p span:first-child {
   white-space: nowrap;

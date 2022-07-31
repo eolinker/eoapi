@@ -1,6 +1,16 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { EoEditorComponent } from 'eo/workbench/browser/src/app/eoui/editor/eo-editor/eo-editor.component';
+import {
+  AfterViewInit,
+  OnDestroy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { EoMonacoEditorComponent } from 'eo/workbench/browser/src/app/shared/components/monaco-editor/monaco-editor.component';
 
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
@@ -11,12 +21,12 @@ import type { TreeNode, FlatNode } from './constant';
   templateUrl: './api-script.component.html',
   styleUrls: ['./api-script.component.scss'],
 })
-export class ApiScriptComponent implements OnInit {
+export class ApiScriptComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() code = '';
   @Input() treeData = [];
   @Input() completions = [];
   @Output() codeChange: EventEmitter<any> = new EventEmitter();
-  @ViewChild(EoEditorComponent, { static: false }) eoEditor?: EoEditorComponent;
+  @ViewChild(EoMonacoEditorComponent, { static: false }) eoEditor?: EoMonacoEditorComponent;
   @ViewChild('nzTreeComponent', { static: false }) nzTreeComponent!: NzTreeComponent;
 
   selectListSelection = new SelectionModel<FlatNode>(true);
@@ -24,7 +34,22 @@ export class ApiScriptComponent implements OnInit {
   dataSource: NzTreeNodeOptions[] = [];
   expandedKeys = [0];
 
-  constructor() {}
+  private resizeObserver: ResizeObserver;
+  private readonly el: HTMLElement;
+
+  constructor(elementRef: ElementRef) {
+    this.el = elementRef.nativeElement;
+  }
+  ngOnDestroy(): void {
+    this.resizeObserver.disconnect();
+  }
+
+  ngAfterViewInit(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.eoEditor?.rerenderEditor();
+    });
+    this.resizeObserver.observe(this.el);
+  }
 
   nzClick($event) {
     const { node } = $event;
@@ -61,7 +86,7 @@ export class ApiScriptComponent implements OnInit {
   }
 
   insertCode = (event) => {
-    console.log('isertCode',event)
+    console.log('isertCode', event);
     const { value } = event.origin;
     this.eoEditor.handleInsert(value);
   };

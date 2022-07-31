@@ -1,32 +1,34 @@
-<nz-tabset
-  [(nzSelectedIndex)]="selectedIndex"
-  nzType="editable-card"
-  nzHideAdd="true"
-  (nzClose)="closeTab($event)"
-  (nzSelectChange)="pickTab()"
-  [nzTabBarExtraContent]="extraTemplate"
->
-  <nz-tab *ngFor="let tab of tabSerive.tabs; let i = index" nzClosable [nzTitle]="titleTemplate">
-    <ng-template #titleTemplate>
-      <span class="mr5 method_text_{{ tab.method }}" *ngIf="tab.method">{{ tab.method }}</span>
-      <span class="text_omit tab_text"> {{ tab.title }}</span>
-    </ng-template>
-  </nz-tab>
-</nz-tabset>
-<ng-template #extraTemplate>
-  <button (click)="newTab()" class="ant-tabs-nav-add {{ tabSerive.tabs.length >= MAX_TAB_LIMIT ? 'hidden' : '' }}">
-    <i nz-icon nzType="plus"></i>
-  </button>
-  <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
-    <button class="ant-tabs-nav-more"><i nz-icon nzType="ellipsis" nzTheme="outline"></i></button>
-  </a>
-  <nz-dropdown-menu #menu="nzDropdownMenu">
-    <ul nz-menu>
-      <li nz-menu-item (click)="operateTab('closeOther')" i18n>Close All Tags (excluding current tabs)</li>
-      <li nz-menu-item (click)="operateTab('closeAll')" i18n>Close All Tabs</li>
-      <!-- <li nz-menu-item>关闭已保存</li> -->
-      <li nz-menu-item (click)="operateTab('closeLeft')" i18n>Close Tabs To The Left</li>
-      <li nz-menu-item (click)="operateTab('closeRight')" i18n>Close Tabs to Right</li>
-    </ul>
-  </nz-dropdown-menu>
-</ng-template>
+<section class="eo-api-tabs">
+  <nz-tabset
+    [(nzSelectedIndex)]="selectedIndex"
+    nzType="editable-card"
+    nzHideAdd="true"
+    (nzClose)="closeTab($event)"
+    (nzSelectChange)="pickTab()"
+    [nzTabBarExtraContent]="extraTemplate"
+  >
+    <nz-tab *ngFor="let tab of tabSerive.tabs; let i = index" nzClosable [nzTitle]="titleTemplate">
+      <ng-template #titleTemplate>
+        <span class="mr5 method_text_{{ tab.method }}" *ngIf="tab.method">{{ tab.method }}</span>
+        <span class="text_omit tab_text"> {{ tab.title }}</span>
+      </ng-template>
+    </nz-tab>
+  </nz-tabset>
+  <ng-template #extraTemplate>
+    <button (click)="newTab()" class="ant-tabs-nav-add {{ tabSerive.tabs.length >= MAX_TAB_LIMIT ? 'hidden' : '' }}">
+      <i nz-icon nzType="plus"></i>
+    </button>
+    <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+      <button class="ant-tabs-nav-more"><i nz-icon nzType="ellipsis" nzTheme="outline"></i></button>
+    </a>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="operateTab('closeOther')" i18n>Close All Tags (excluding current tabs)</li>
+        <li nz-menu-item (click)="operateTab('closeAll')" i18n>Close All Tabs</li>
+        <!-- <li nz-menu-item>关闭已保存</li> -->
+        <li nz-menu-item (click)="operateTab('closeLeft')" i18n>Close Tabs To The Left</li>
+        <li nz-menu-item (click)="operateTab('closeRight')" i18n>Close Tabs to Right</li>
+      </ul>
+    </nz-dropdown-menu>
+  </ng-template>
+</section>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ElectronService } from 'eo/workbench/browser/src/app/core/services/electron/electron.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
@@ -9,7 +10,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     <form nz-form nzLayout="vertical" [formGroup]="validateForm" (ngSubmit)="submitForm()">
       <nz-form-item>
         <nz-form-control>
-          <nz-select formControlName="eoapi-common.dataStorage" i18n-nzPlaceHolder="@@DataSource" nzPlaceHolder="Data Storage">
+          <nz-select
+            formControlName="eoapi-common.dataStorage"
+            i18n-nzPlaceHolder="@@DataSource"
+            nzPlaceHolder="Data Storage"
+          >
             <nz-option nzValue="http" i18n-nzLabel="@@Remote Server" nzLabel="Remote Server"></nz-option>
             <nz-option nzValue="local" i18n-nzLabel nzLabel="Localhost"></nz-option>
           </nz-select>
@@ -17,7 +22,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
         <div class="text-[12px] mt-[8px] text-gray-400">
           <p i18n>Localhost: Store the data locally. You can only use the product on the current computer.</p>
           <p i18n>
-            Remote Server: Store data on a remote server to facilitate cross device use of the product.
+            Remote Server: Store data on a remote server to facilitate cross device use of the product. Only the client
+            can connect to the remote server. You need to download the client first.
             <a href="https://eoapi.io/docs/storage.html" target="_blank" class="eo_link"> Learn more..</a>
           </p>
         </div>
@@ -62,7 +68,7 @@ export class DataStorageComponent implements OnInit, OnChanges {
   validateForm!: FormGroup;
   loading = false;
 
-  constructor(private fb: FormBuilder, private message: NzMessageService) {}
+  constructor(private fb: FormBuilder, private message: NzMessageService, private electronService: ElectronService) {}
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
@@ -121,6 +127,11 @@ export class DataStorageComponent implements OnInit, OnChanges {
   }
 
   async submitForm() {
+    if (!this.electronService.isElectron && this.validateForm.value['eoapi-common.dataStorage'] === 'http') {
+      return this.message.error(
+        $localize`Only the client can connect to the remote server. You need to download the client first.`
+      );
+    }
     if (this.validateForm.valid) {
       console.log('submit', this.validateForm.value);
       this.loading = true;

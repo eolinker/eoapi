@@ -18,7 +18,6 @@ import { SyncApiComponent } from '../../shared/components/sync-api/sync-api.comp
 import { ImportApiComponent } from '../../shared/components/import-api/import-api.component';
 import { ExtensionSelectComponent } from '../../shared/components/extension-select/extension-select.component';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
@@ -33,6 +32,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 
 import { ApiGroupTreeComponent } from './group/tree/api-group-tree.component';
 import { ApiTabComponent } from './tab/api-tab.component';

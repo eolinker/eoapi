@@ -4,5 +4,17 @@ header {
 nz-divider {
   margin: 0 15px 0 0;
 }
-
-
+::ng-deep{
+  .api_test_history_list {
+    .method_label {
+      padding: 1px 3px;
+    }
+    .thead_div_wrap {
+      overflow-y: scroll;
+    }
+    .tbody_div_wrap {
+      max-height: 190px;
+      overflow-y: scroll;
+    }
+  }
+}

@@ -43,6 +43,7 @@ import { ApiTestResultResponseComponent } from './result-response/api-test-resul
 import { ApiTestHistoryComponent } from './history/api-test-history.component';
 import { ApiTestResultRequestBodyComponent } from './result-request-body/api-test-result-request-body.component';
 import { TestServerRemoteService } from 'eo/workbench/browser/src/app/shared/services/api-test/remote-node/test-connect.service';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 const NZ_COMPONETS = [
   NzDropDownModule,
   NzModalModule,
@@ -61,6 +62,7 @@ const NZ_COMPONETS = [
   NzToolTipModule,
   NzAlertModule,
   NzTypographyModule,
+  NzUploadModule
 ];
 const COMPONENTS = [
   ApiTestComponent,

@@ -21,8 +21,9 @@ import { ApiDetailRestComponent } from './rest/api-detail-rest.component';
 import { ApiDetailMockComponent } from './mock/api-detail-mock.component';
 
 import { ApiDetailService } from './api-detail.service';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 
-const NZ_COMPONETS = [NzButtonModule, NzIconModule, NzTagModule, NzModalModule, NzFormModule, NzToolTipModule];
+const NZ_COMPONETS = [NzButtonModule, NzCollapseModule,NzIconModule, NzTagModule, NzModalModule, NzFormModule, NzToolTipModule];
 const COMPONENTS = [
   ApiDetailComponent,
   ApiDetailHeaderComponent,

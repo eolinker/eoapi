@@ -27,25 +27,48 @@
     </span>
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu nzSelectable>
-        <a href="https://eoapi.io/" target="_blank" nz-menu-item i18n>Document</a>
+        <a href="https://docs.eoapi.io" target="_blank" nz-menu-item i18n>Document</a>
+        <a href="https://developer.eoapi.io" target="_blank" nz-menu-item i18n>Developer Support</a>
         <li nz-menu-divider></li>
-        <a href="https://github.com/eolinker/eoapi/issues/new" target="_blank" nz-menu-item i18n>Report Issue</a>
+        <a href="https://github.com/eolinker/eoapi/issues" target="_blank" nz-menu-item i18n>Report Issue</a>
       </ul>
     </nz-dropdown-menu>
     <div *ngIf="!OS_TYPE.includes('mac') && isElectron">
-      <span nz-tooltip i18n-nzTooltipTitle nzTooltipTitle="Minimize" nzTooltipPlacement="left" class="iconfont icon-jianhao mr10 fs24 cp"
-        (click)="minimize()">
+      <span
+        nz-tooltip
+        i18n-nzTooltipTitle
+        nzTooltipTitle="Minimize"
+        nzTooltipPlacement="left"
+        class="iconfont icon-jianhao mr10 fs24 cp"
+        (click)="minimize()"
+      >
       </span>
-      <span nz-tooltip i18n-nzTooltipTitle [nzTooltipTitle]="isMaximized ? 'Restore' : 'Maximize'" nzTooltipPlacement="left"
+      <span
+        nz-tooltip
+        i18n-nzTooltipTitle
+        [nzTooltipTitle]="isMaximized ? 'Restore' : 'Maximize'"
+        nzTooltipPlacement="left"
         class="iconfont icon-{{ isMaximized ? 'copy' : 'duoxuanweixuanzhong' }} mr10 fs24 cp"
-        (click)="toggleMaximize()">
+        (click)="toggleMaximize()"
+      >
       </span>
-      <span nz-tooltip i18n-nzTooltipTitle nzTooltipTitle="Close" nzTooltipPlacement="left" class="iconfont icon-guanbi pr15 fs24 cp"
-        (click)="close()">
+      <span
+        nz-tooltip
+        i18n-nzTooltipTitle
+        nzTooltipTitle="Close"
+        nzTooltipPlacement="left"
+        class="iconfont icon-guanbi pr15 fs24 cp"
+        (click)="close()"
+      >
       </span>
     </div>
     <div *ngIf="!isElectron">
-      <div class="btn py-1.5 px-2 mx-1 flex items-center" nz-dropdown i18n [nzDropdownMenu]="download">Download</div>
+      <div class="btn py-1.5 px-2 mx-1 flex items-center" nz-dropdown i18n [nzDropdownMenu]="download">
+        <span class="flex items-center delete-icon">
+          <eo-iconpark-icon name="down-two" size="14px"></eo-iconpark-icon>
+        </span>
+        <span class="ml-1">Download</span>
+      </div>
       <nz-dropdown-menu #download="nzDropdownMenu">
         <ul nz-menu>
           <ng-container *ngFor="let item of resourceInfo; let index = index">

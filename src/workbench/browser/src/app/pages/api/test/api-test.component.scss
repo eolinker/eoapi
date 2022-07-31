@@ -4,7 +4,7 @@
 
 .basic_info_container {
   padding: 10px;
-  background-color: var(--SEC_BG);
+  background-color: var(--MAIN_BG);
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 0px;
@@ -17,17 +17,46 @@ eo-api-test-body,
 eo-api-test-query,
 eo-api-test-rest {
   display: block;
+  height: 100%;
+  overflow: auto;
 }
 .test_wrap {
   height: 100%;
   .scroll_container {
-    height: calc(100% - 52px);
-    // overflow-y: auto;
+    // height: calc(100% - 52px);
+    overflow-y: auto;
   }
-}
-.icon-circle{
-  font-size: 12px;
-  margin-left: 3px;
+  ::ng-deep .top_container {
+    height: 100%;
+
+    form {
+      position: sticky;
+      top: 0;
+    }
+    .ant-tabs {
+      height: calc(100% - 52px);
+      .ant-tabs-tabpane {
+        height: 100%;
+        overflow: hidden;
+      }
+      .ant-tabs-nav,.param_header {
+        // position: sticky;
+        // top: 0;
+        // z-index: 10;
+        // background-color: white;
+      }
+      .ant-tabs-content {
+        overflow: hidden;
+        height: 100%;
+      }
+      eo-api-test-body[ng-reflect-body-type=formData] {
+      }
+    }
+  }
+  .bottom_container {
+    height: 100%;
+  }
+
 }
 .env_front_uri {
   max-width: 240px;
@@ -42,12 +71,6 @@ div.ant-typography{
   margin-bottom: 0;
 }
 ::ng-deep {
-  .param_header {
-    padding: 5px 15px;
-  }
-  .param_header + list-block-common-component .wrap_lbcc {
-    border-top: 1px solid var(--BORDER);
-  }
   .response_container{
     .ant-tabs-tabpane{
       min-height: 208px;

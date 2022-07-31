@@ -1,0 +1,55 @@
+.eo-editor {
+  min-height: var(--eo-editor-height, 70px);
+}
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.button_list {
+  border: 1px solid var(--BORDER);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+  align-items: center;
+  padding-left: 10px;
+  nz-select {
+    width: 90px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: var(--MAIN_BG);
+    color: var(--MAIN_TEXT);
+    &:hover {
+      color: var(--BLUE_NORMAL);
+    }
+    > i {
+      margin: 0 5px;
+    }
+  }
+}
+
+::ng-deep eo-editor {
+  height: 100%;
+  & > div {
+    height: 100%;
+  }
+  .ace_editor {
+    min-height: inherit !important;
+  }
+  .ace-editor {
+    height: calc(100% - 52px);
+    min-height: inherit;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+  }
+}

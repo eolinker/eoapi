@@ -1,5 +1,5 @@
 import { whatType, whatTextType } from '..';
-import { ApiBodyType, JsonRootType } from '../../shared/services/storage/index.model';
+import { ApiBodyType, ApiEditBody, JsonRootType } from '../../shared/services/storage/index.model';
 import { flatData } from '../tree/tree.utils';
 
 export const isXML = (data) => {
@@ -158,18 +158,69 @@ export const xml2UiData = (text) => {
   });
   return JSON.parse(JSON.stringify(result));
 };
+/**
+ * Json object 2 xml
+ *
+ * @param o Object
+ * @param tab tab or indent string for pretty output formatting,omit or use empty string "" to supress.
+ * @returns
+ */
+export const json2XML: (o: object, tab?) => string = (o, tab) => {
+  const toXml = function(v, name, ind) {
+    let xml = '';
+    if (v instanceof Array) {
+      for (let i = 0, n = v.length; i < n; i++) {
+        xml += ind + toXml(v[i], name, ind + '\t') + '\n';
+      }
+    } else if (typeof v == 'object') {
+      let hasChild = false;
+      xml += ind + '<' + name;
+      for (var m in v) {
+        if (m.charAt(0) == '@') {
+          xml += ' ' + m.substr(1) + '="' + v[m].toString() + '"';
+        } else {
+          hasChild = true;
+        }
+      }
+      xml += hasChild ? '>' : '/>';
+      if (hasChild) {
+        for (var m in v) {
+          if (m == '#text') {
+            xml += v[m];
+          } else if (m == '#cdata') {
+            xml += '<![CDATA[' + v[m] + ']]>';
+          } else if (m.charAt(0) != '@') {
+            xml += toXml(v[m], m, ind + '\t');
+          }
+        }
+        xml += (xml.charAt(xml.length - 1) == '\n' ? ind : '') + '</' + name + '>';
+      }
+    } else {
+      xml += ind + '<' + name + '>' + v.toString() + '</' + name + '>';
+    }
+    return xml;
+  };
+  let xml = '';
+  for (const m in o) {
+    if (Object.prototype.hasOwnProperty.call(o, m)) {
+      xml += toXml(o[m], m, '');
+    }
+  }
+  return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, '');
+};
 
 /**
  * Transfer text to json/xml/raw ui data,such as request body/response body
- * @returns {object} body info
+ *
+ * @returns body info
  */
 export const text2UiData: (text: string) => uiData = (text) => {
-  let result: uiData = {
+  const result: uiData = {
     textType: 'raw',
     rootType: 'object',
     data: text,
   };
-  let textType = whatTextType(text);
+  const textType = whatTextType(text);
   result.textType = ['xml', 'json'].includes(textType) ? textType : 'raw';
   switch (result.textType) {
     case 'xml': {
@@ -190,5 +241,122 @@ export const text2UiData: (text: string) => uiData = (text) => {
       break;
     }
   }
+  return result;
+};
+
+/**
+ * Format eoapi body to json
+ * !TODO refactor
+ *
+ * @param eoapiList
+ * @param inputOptions
+ * @returns
+ */
+export const uiData2Json = function(eoapiArr: ApiEditBody, inputOptions) {
+  inputOptions = inputOptions || {};
+  const result = {};
+  const loopFun = (inputArr, inputObject) => {
+    if (inputOptions.checkXmlAttr) {
+      inputObject['@eo_attr'] = inputObject['@eo_attr'] || {};
+    }
+    for (const val of inputArr) {
+      if (!val.name) {
+        continue;
+      }
+      if (!val.required && !inputOptions.ignoreCheckbox) {
+        continue;
+      }
+      const tmpKey = val.nameHtml || val.name;
+      if (inputOptions.checkXmlAttr) {
+        if (val.isErrorXmlAttr) {
+          // $rootScope.InfoModal('请填写正确格式的XML属性列表再进行转换', 'warning');
+          throw new Error('errorXmlAttr');
+        }
+        if (inputObject['@eo_attr'].hasOwnProperty(tmpKey)) {
+          inputObject['@eo_attr'][tmpKey] = [
+            inputObject['@eo_attr'][tmpKey],
+            (val.attribute || '').replace(/\s+/, ' '),
+          ];
+        } else {
+          inputObject['@eo_attr'][tmpKey] = (val.attribute || '').replace(/\s+/, ' ');
+        }
+      }
+      if (inputOptions.defaultValueKey) {
+        inputObject[tmpKey] = val[inputOptions.defaultValueKey];
+      } else {
+        inputObject[tmpKey] = val.paramInfo;
+      }
+      if (val.children && val.children.length > 0) {
+        switch (val.type) {
+          case 'array': {
+            const tmp_child_zero_item = val.children[0];
+            if (tmp_child_zero_item.isArrItem) {
+              // 判断是否为新数组格式
+              if (inputOptions.checkXmlAttr) {
+                inputObject['@eo_attr'][tmpKey] = [];
+              }
+              inputObject[tmpKey] = [];
+              val.children.forEach((tmp_arr_item) => {
+                if (!(tmp_arr_item.checkbox || tmp_arr_item.paramNotNull || inputOptions.ignoreCheckbox)) {
+                  return;
+                }
+                if (inputOptions.checkXmlAttr) {
+                  const tmp_attr = typeof tmp_arr_item.attribute === 'string' ? tmp_arr_item.attribute : '';
+                  inputObject['@eo_attr'][tmpKey].push(tmp_attr.replace(/\s+/, ' '));
+                }
+                let tmp_result_arr_item = {};
+                if (tmp_arr_item.type === 'array' || !(tmp_arr_item.children && tmp_arr_item.children.length > 0)) {
+                  loopFun([tmp_arr_item], tmp_result_arr_item);
+                  tmp_result_arr_item = tmp_result_arr_item[tmp_arr_item.nameHtml || tmp_arr_item.name];
+                } else {
+                  loopFun(tmp_arr_item.children, tmp_result_arr_item);
+                }
+                inputObject[tmpKey].push(tmp_result_arr_item);
+              });
+            } else {
+              if (inputOptions.checkXmlAttr) {
+                inputObject['@eo_attr'][tmpKey] = [inputObject['@eo_attr'][tmpKey]];
+              }
+              inputObject[tmpKey] = [{}];
+              loopFun(val.children, inputObject[tmpKey][0]);
+            }
+            break;
+          }
+          default: {
+            inputObject[tmpKey] = {};
+            loopFun(val.children, inputObject[tmpKey]);
+            break;
+          }
+        }
+      } else {
+        const tmpDefaultTypeValueObj = {
+          boolean: 'false',
+          array: '[]',
+          object: '{}',
+          number: '0',
+          int: '0',
+        };
+        switch (val.type) {
+          case 'string': {
+            inputObject[tmpKey] = inputObject[tmpKey] || '';
+            break;
+          }
+          case 'null': {
+            inputObject[tmpKey] = null;
+            break;
+          }
+          default: {
+            try {
+              inputObject[tmpKey] = JSON.parse(inputObject[tmpKey] || tmpDefaultTypeValueObj[val.type]);
+            } catch (JSON_PARSE_ERROR) {
+              inputObject[tmpKey] = inputObject[tmpKey] || '';
+            }
+            break;
+          }
+        }
+      }
+    }
+  };
+  loopFun(eoapiArr, result);
   return result;
 };

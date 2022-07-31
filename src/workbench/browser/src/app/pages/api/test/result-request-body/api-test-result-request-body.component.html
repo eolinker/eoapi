@@ -11,10 +11,6 @@
     </li>
   </ul>
   <!-- JSON / XML / Raw -->
-  <eo-editor
-    *ngIf="modelType === 'string'"
-    class="mt20"
-    [(code)]="model"
-    [eventList]="['type', 'format', 'copy', 'download', 'newTab', 'search']"
-  ></eo-editor>
+  <eo-monaco-editor *ngIf="modelType === 'string'" class="mt20" [(code)]="model"
+    [eventList]="['type', 'format', 'copy', 'search']"></eo-monaco-editor>
 </div>

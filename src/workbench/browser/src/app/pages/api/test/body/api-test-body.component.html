@@ -1,28 +1,31 @@
 <div class="param_header">
-  <div class="h-9 f_row_ac">
+  <div class="f_row_ac">
     <nz-radio-group [(ngModel)]="bodyType" (ngModelChange)="changeBodyType()">
       <label *ngFor="let item of CONST.API_BODY_TYPE" nz-radio [nzValue]="item.value">{{ item.key }}</label>
     </nz-radio-group>
-    <nz-divider nzType="vertical"></nz-divider>
-    <params-import *ngIf="['formData', 'json', 'xml'].includes(bodyType)" [baseData]="model" [contentType]="bodyType"
-      (baseDataChange)="handleParamsImport($event)" (beforeHandleImport)="beforeHandleImport($event)"
-      [rootType]="jsonRootType"></params-import>
-  </div>
-  <div *ngIf="bodyType === 'json'">
-    <p class="fs12 c999 mb5" i18n>JSON Root Type:</p>
-    <nz-select class="w_100 mb10" [(ngModel)]="jsonRootType">
-      <nz-option *ngFor="let item of CONST.JSON_ROOT_TYPE" [nzLabel]="item.key" [nzValue]="item.value"></nz-option>
+    <nz-divider *ngIf="['formData', 'raw'].includes(bodyType)" nzType="vertical"></nz-divider>
+    <!-- Import -->
+    <params-import *ngIf="['formData'].includes(bodyType)" [baseData]="model" [contentType]="bodyType"
+      (baseDataChange)="handleParamsImport($event)"></params-import>
+    <!--Select content-type-->
+    <nz-select *ngIf="['raw'].includes(bodyType)" class="fs12" (ngModelChange)="changeContentType($event)"
+      [(ngModel)]="contentType" nzBorderless>
+      <nz-option *ngFor="let item of CONST.CONTENT_TYPE" [nzValue]="item.value" [nzLabel]="item.name"></nz-option>
     </nz-select>
   </div>
 </div>
 <!-- FormData -->
+<list-block-common-component *ngIf="['formData'].includes(bodyType)" [mainObject]="listConf" [(list)]="model">
+</list-block-common-component>
 <!-- JSON -->
 <!-- XML -->
-<list-block-common-component *ngIf="['formData', 'json', 'xml'].includes(bodyType)" [mainObject]="listConf"
-  [(list)]="model"></list-block-common-component>
 <!-- Raw -->
-<eo-editor [(code)]="model" (codeChange)="rawDataChange()" *ngIf="bodyType === 'raw'" [config]="{maxLines: 10}"
-  [eventList]="['type', 'format', 'copy', 'download', 'newTab', 'search', 'replace']"></eo-editor>
+<eo-monaco-editor [(code)]="model" (codeChange)="rawDataChange()" *ngIf="bodyType === 'raw'" [maxLine]="100"
+  [eventList]="['type', 'format', 'copy', 'search', 'replace']"></eo-monaco-editor>
 <!-- Binary -->
-<textarea class="btd" rows="4" *ngIf="bodyType === 'binary'" nzBorderless i18n-placeholder="@@Description"
-  placeholder="Description" nz-input [(ngModel)]="model"></textarea>
+<div class="px-5" *ngIf="bodyType === 'binary'">
+  <nz-upload nzType="drag" [nzBeforeUpload]="uploadBinary"
+    [nzShowUploadList]="{ showDownloadIcon: false, showRemoveIcon: true }" [(nzFileList)]="binaryFiles" nzSize="5120">
+    <p class="ant-upload-text" i18n>Tap or drag files directly to this area</p>
+  </nz-upload>
+</div>

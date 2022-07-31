@@ -1,0 +1,13 @@
+<div class="split-wrapper" [ngStyle]="{ flexDirection: direction }">
+  <div #scalable class="scalable" [style]="topStyle">
+    <ng-content select="[top]"></ng-content>
+  </div>
+  <div class="separator" (mousedown)="startDrag($event)" [ngClass]="[direction]">
+    <div *ngIf="!hideSeparator" class="trigger-bar-con">
+      <i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+  <div #bottomRef [style]="bottomStyle">
+    <ng-content select="[bottom]"></ng-content>
+  </div>
+</div>

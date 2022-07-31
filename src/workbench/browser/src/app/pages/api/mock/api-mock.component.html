@@ -7,14 +7,8 @@
         <div class="truncate w-[120px]">{{ scope.name }}</div>
       </ng-template>
       <ng-template cell="url" let-scope="scope" let-index="index">
-        <span
-          i18n-nzTooltipTitle
-          nzTooltipTitle="Click to Copy"
-          nzTooltipPlacement="top"
-          nz-tooltip
-          (click)="copyText(scope.url)"
-          class="truncate"
-        >
+        <span i18n-nzTooltipTitle nzTooltipTitle="Click to Copy" nzTooltipPlacement="top" nz-tooltip
+          (click)="copyText(scope.url)" class="truncate">
           {{ scope.url }}
         </span>
       </ng-template>
@@ -24,20 +18,10 @@
       <ng-template cell="action" let-scope="scope" let-index="index">
         <div class="flex justify-evenly">
           <a nz-button nzType="link" *ngIf="scope.name || scope.url" (click)="addOrEditModal(index)" i18n>
-            {{ scope.createWay === 'system' ? 'Preview' : 'Edit' }}</a
-          >
-          <a
-            nz-button
-            nzType="link"
-            *ngIf="(scope.name || scope.url) && scope.createWay !== 'system'"
-            nz-popconfirm
-            i18n-nzPopconfirmTitle
-            nzPopconfirmTitle="Are you sure you want to delete this Mock?"
-            nzPopconfirmPlacement="topRight"
-            (nzOnConfirm)="handleDeleteMockItem(index)"
-            i18n="@@Delete"
-            >Delete</a
-          >
+            {{ scope.createWay === 'system' ? 'Preview' : 'Edit' }}</a>
+          <a nz-button nzType="link" *ngIf="(scope.name || scope.url) && scope.createWay !== 'system'" nz-popconfirm
+            i18n-nzPopconfirmTitle nzPopconfirmTitle="Are you sure you want to delete this Mock?"
+            nzPopconfirmPlacement="topRight" (nzOnConfirm)="handleDeleteMockItem(index)" i18n="@@Delete">Delete</a>
         </div>
       </ng-template>
     </eo-table>
@@ -51,24 +35,16 @@
         <nz-form-item>
           <nz-form-label i18n nzFor="currentEditMock.name">Mock Name</nz-form-label>
           <nz-form-control>
-            <input
-              nz-input
-              name="name"
-              type="text"
-              [(ngModel)]="currentEditMock.name"
-              [readonly]="currentEditMock.createWay === 'system'"
-            />
+            <input nz-input name="name" type="text" [(ngModel)]="currentEditMock.name"
+              [readonly]="currentEditMock.createWay === 'system'" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
           <nz-form-label i18n nzFor="currentEditMock.response">Response</nz-form-label>
           <nz-form-control>
-            <eo-editor
-              [(code)]="responseStr"
-              (codeChange)="rawDataChange()"
+            <eo-monaco-editor [(code)]="responseStr" (codeChange)="rawDataChange()"
               [disabled]="currentEditMock.createWay === 'system'"
-              [eventList]="['type', 'format', 'copy', 'download', 'newTab', 'search', 'replace']"
-            ></eo-editor>
+              [eventList]="['type', 'format', 'copy', 'search', 'replace']"></eo-monaco-editor>
           </nz-form-control>
         </nz-form-item>
       </form>

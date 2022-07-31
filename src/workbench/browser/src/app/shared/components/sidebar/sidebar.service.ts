@@ -7,7 +7,7 @@ import { SidebarModuleInfo } from './sidebar.model';
   providedIn: 'root',
 })
 export class SidebarService {
-  collapsed = true;
+  collapsed = false;
   currentModule: ModuleInfo | SidebarModuleInfo | any;
   private collapsedChanged$: Subject<boolean> = new Subject();
   public appChanged$: Subject<void> = new Subject();

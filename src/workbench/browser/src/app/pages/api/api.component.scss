@@ -19,75 +19,6 @@ nz-sider {
   background-color: #fff;
 }
 
- ::ng-deep {
-  .ant-layout-sider-children {
-    border-right: 1px solid #f0f0f0;
-    // padding: 0 10px;
-    .group-btn-add,
-    .group-search {
-      margin-bottom: 12px;
-    }
-  }
-  .ant-tabs-top > .ant-tabs-nav::before {
-    left: 10px;
-    right: 10px;
-  }
-  .ant-tabs-nav.ng-star-inserted {
-    padding: 0 10px;
-  }
-  .api-tabs .ant-tabs-nav-list {
-    width: 100%;
-    justify-content: space-evenly;
-    .ant-tabs-tab {
-      flex: 1;
-      justify-content: center;
-      margin: 0;
-    }
-  }
-  .tabs-bar {
-    background-color: var(--SEC_BG);
-    padding: 5px 10px 0 15px;
-    display: flex;
-    margin-bottom: -1px;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .content_container {
-    border-top: 1px solid var(--BORDER);
-    .inside_page_tab {
-      .ant-tabs-nav {
-        padding-left: 20px;
-      }
-    }
-  }
-
-  .method_text_GET {
-    color: var(--BLUE_TAG_BG);
-  }
-  .method_text_POST {
-    color: var(--GREEN_TAG_BG);
-  }
-  .method_text_DELETE {
-    color: var(--RED_TAG_BG);
-  }
-  .method_text_HEAD {
-    color: var(--YELLOW_TAG_BG);
-  }
-  .method_text_PATCH {
-    color: var(--ORANGE_TAG_BG);
-  }
-  .method_text_PUT,
-  .method_text_OPTIONS {
-    color: var(--BLACK_TAG_BG);
-  }
-}
-
-.api-tabs {
-  ::ng-deep .ant-tabs-tab {
-    padding: 0.2em 0;
-  }
-}
-
 .fix-mt {
   margin-top: -6px;
 }
@@ -105,11 +36,178 @@ nz-divider {
   width: 30px;
   height: 30px;
   font-size: 1.5em;
-  color: rgba(0,0,0,0.5);
+  color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   border-radius: 3px;
-  transition: all .4s ease;
+  transition: all 0.4s ease;
   &:hover {
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
   }
+}
+
+::ng-deep {
+  eo-api {
+    .ant-layout-sider-children {
+      border-right: 1px solid #f0f0f0;
+      // padding: 0 10px;
+      .group-btn-add,
+      .group-search {
+        margin-bottom: 12px;
+      }
+    }
+    .ant-tabs-nav.ng-star-inserted {
+      padding: 0 10px;
+    }
+    .api-container-tabs {
+      .ant-tabs-nav {
+        height: 40px;
+      }
+      .ant-tabs-nav-list {
+        width: 100%;
+        justify-content: space-evenly;
+        .ant-tabs-tab {
+          // flex: 1;
+          width: 49%;
+          justify-content: center;
+          margin: 0;
+        }
+      }
+    }
+    .tabs-bar {
+      background-color: var(--SEC_BG);
+      padding: 5px 0px 0px 5px;
+      display: flex;
+      margin-bottom: -1px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .content_container {
+      border-top: 1px solid var(--BORDER);
+      .inside_page_tabset {
+        .ant-tabs-tab-active {
+          a {
+            color: var(--MAIN_THEME_COLOR);
+          }
+        }
+        a {
+          color: #999;
+        }
+      }
+    }
+
+    .method_text_GET {
+      color: var(--BLUE_TAG_BG);
+    }
+    .method_text_POST {
+      color: var(--GREEN_TAG_BG);
+    }
+    .method_text_DELETE {
+      color: var(--RED_TAG_BG);
+    }
+    .method_text_HEAD {
+      color: var(--YELLOW_TAG_BG);
+    }
+    .method_text_PATCH {
+      color: var(--ORANGE_TAG_BG);
+    }
+    .method_text_PUT,
+    .method_text_OPTIONS {
+      color: var(--BLACK_TAG_BG);
+    }
+    .param_header {
+      padding: 5px 15px;
+      >div{
+        min-height: 32px;
+      }
+      .ant-radio-wrapper {
+        font-size: 12px;
+      }
+      .ant-radio-inner {
+        width: 14px;
+        height: 14px;
+      }
+      .ant-radio-inner::after {
+        width: 14px;
+        height: 14px;
+        margin-top: -7px;
+        margin-left: -7px;
+      }
+    }
+    .ant-collapse-content {
+      margin: 0 25px;
+    }
+    .param_header + list-block-common-component .wrap_lbcc {
+      border-top: 1px solid var(--BORDER);
+    }
+    .ant-divider {
+      margin: 10px 0;
+    }
+  }
+  
+  .env {
+    border: 2px solid pink;
+  }
+  .right-bar {
+    // transition: 0.1s all ease;
+    &.left-line {
+      border-left: 1px solid rgba(0, 0, 0, 0.07);
+    }
+
+    .env-icon {
+      color: rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      // transition: all 0.4s ease;
+      &.active {
+        color: #00785a;
+      }
+      &:hover {
+        color: #00785a;
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+
+  .api-container-tabs {
+    ::ng-deep .ant-tabs-tab {
+      padding: 0.2em 0;
+      padding: 0;
+      margin: 0;
+      .ant-tabs-tab-btn {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .tab-content {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  // .api-tabs {
+  //   ::ng-deep .ant-tabs-tab {
+  //     padding: 0.2em 0;
+  //     padding: 0;
+  //     margin: 0;
+  //     .ant-tabs-tab-btn {
+  //       width: 100%;
+  //       height: 100%;
+  //       display: flex;
+  //       align-items: center;
+  //       justify-content: center;
+  //       .tab-content {
+  //         width: 100%;
+  //         height: 100%;
+  //         display: flex;
+  //         align-items: center;
+  //         justify-content: center;
+  //       }
+  //     }
+  //   }
+  // }
 }

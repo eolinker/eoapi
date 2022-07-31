@@ -3,9 +3,11 @@
     <span class="font-bold" i18n>History</span>
     <div
       class="flex items-center justify-center cursor-pointer shrink-0 h-7"
+      i18-nzTooltipTitle
       nzTooltipTitle="Clear All"
       nz-tooltip
       nz-popconfirm
+      i18n-nzPopconfirmTitle
       nzPopconfirmTitle="Are you sure delete all history?"
       (nzOnConfirm)="clearAllHistory()"
       (nzOnCancel)="cancel()"

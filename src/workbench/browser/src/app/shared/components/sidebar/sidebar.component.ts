@@ -12,7 +12,7 @@ import { SidebarModuleInfo } from './sidebar.model';
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
-  isCollapsed: boolean;
+  isCollapsed = false;
   destroy = false;
   modules: Array<ModuleInfo | SidebarModuleInfo | any>;
   constructor(private electron: ElectronService, private router: Router, public sidebar: SidebarService) {

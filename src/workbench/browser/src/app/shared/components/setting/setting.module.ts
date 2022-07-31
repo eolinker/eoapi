@@ -27,6 +27,7 @@ import {
   DataStorageComponent,
   LanguageSwticherComponent,
   AboutComponent,
+  ExtensionSettingComponent,
 } from 'eo/workbench/browser/src/app/shared/components/setting/common';
 
 const ANTDMODULES = [
@@ -55,6 +56,7 @@ const ANTDMODULES = [
     DataStorageComponent,
     LanguageSwticherComponent,
     AboutComponent,
+    ExtensionSettingComponent,
   ],
   imports: [FormsModule, ReactiveFormsModule, SharedModule, CommonModule, ...ANTDMODULES],
   exports: [SettingComponent, SelectThemeComponent],

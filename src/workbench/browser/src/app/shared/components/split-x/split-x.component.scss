@@ -1,0 +1,16 @@
+.line {
+    background: #f8f8f9;
+    display: flex;
+    align-items: center;
+    &:hover {
+        background: #68be8d;
+        border-color: #68be8d;
+    }
+    > i {
+        margin: 1px 0;
+        height: 2px;
+        width: 2px;
+        border-radius: 2px;
+        background: rgba(23,35,61,.25);
+    }
+}

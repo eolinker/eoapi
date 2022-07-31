@@ -2,13 +2,11 @@ export enum ApiTestParamsTypeFormData {
   text = 'string',
   file = 'file',
 }
-export enum ApiTestParamsTypeJsonOrXml {
-  string = 'string',
-  boolean = 'boolean',
-  array = 'array',
-  object = 'object',
-  number = 'number',
-  null = 'null',
+export enum ContentTypeByAbridge {
+  Text = 'text/plain',
+  JSON = 'application/json',
+  XML = 'application/xml',
+  HTML = 'text/html',
 }
 interface BasiApiTestParams {
   /**
@@ -35,7 +33,7 @@ export interface ApiTestBody extends BasiApiTestParams {
   /**
    * If value is file,value is base64 string
    */
-  files?:string;
+  files?: string;
   /**
    * XML attribute
    */
@@ -44,4 +42,10 @@ export interface ApiTestBody extends BasiApiTestParams {
    * child param
    */
   children?: ApiTestBody[];
+}
+
+export enum ApiTestBodyType {
+  'Form-data' = 'formData',
+  Raw = 'raw',
+  Binary = 'binary',
 }

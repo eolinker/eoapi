@@ -14,6 +14,9 @@
 .list-block {
   height: calc(100% - 65px);
   overflow: auto;
+  >div{
+    border-radius: 3px;
+  }
 }
 .warn-color {
   color: var(--MAIN_THEME_COLOR);

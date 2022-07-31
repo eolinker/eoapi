@@ -34,8 +34,9 @@ export class TestServerAPIKitService implements TestServer {
   }
   /**
    * Format TestResult to TestData
-   * @param  {object} report test result after test finish
-   * @param  {object} history storage test history
+   *
+   * @param report test result after test finish
+   * @param history storage test history
    */
   formatResponseData({ report, history, id }) {
     ['general', 'requestInfo', 'resultInfo'].forEach((keyName) => {
@@ -48,7 +49,7 @@ export class TestServerAPIKitService implements TestServer {
     });
   }
   close() {
-    if (!this.socket) return;
+    if (!this.socket) {return;}
     this.socket.close();
   }
 }

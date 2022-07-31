@@ -28,8 +28,9 @@ export class TestServerLocalNodeService implements TestServer {
   }
   /**
    * Format TestResult to TestData
-   * @param  {object} report test result after test finish
-   * @param  {object} history storage test history
+   *
+   * @param report test result after test finish
+   * @param history storage test history
    */
   formatResponseData(data) {
     return eoFormatResponseData(data);

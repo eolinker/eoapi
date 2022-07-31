@@ -3,11 +3,12 @@ import { formatDate } from '@angular/common';
 import { TestLocalNodeData } from './local-node/api-server-data.model';
 import { ApiBodyType, ApiData } from '../storage/index.model';
 import { ApiTestRes, requestDataOpts } from 'eo/workbench/browser/src/app/shared/services/api-test/test-server.model';
-const METHOD = ['POST', 'GET', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH'],
-  PROTOCOL = ['http', 'https'],
-  REQUEST_BODY_TYPE = ['formData', 'raw', 'json', 'xml', 'binary'];
+const METHOD = ['POST', 'GET', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH'];
+const PROTOCOL = ['http', 'https'];
+const REQUEST_BODY_TYPE = ['formData', 'raw', 'json', 'xml', 'binary'];
 /**
  * Handle Test url,such as replace rest
+ *
  * @param uri
  * @param rest
  * @returns
@@ -85,8 +86,8 @@ export const eoFormatRequestData = (
         });
         break;
       }
+      case ApiBodyType.Binary:
       case ApiBodyType.Raw: {
-        // case ApiBodyType.Binary:
         result = inData.requestBody;
         break;
       }
@@ -94,7 +95,7 @@ export const eoFormatRequestData = (
     return result;
   };
   const formatEnv = (env) => {
-    let result = {
+    const result = {
       paramList: (env.parameters || []).map((val) => ({ paramKey: val.name, paramValue: val.value })),
       frontURI: env.hostUri,
     };
@@ -102,7 +103,7 @@ export const eoFormatRequestData = (
   };
   const result: TestLocalNodeData = {
     lang: opts.lang,
-    globals:opts.globals,
+    globals: opts.globals,
     URL: formatUri(data.uri, data.restParams),
     method: data.method,
     methodType: METHOD.indexOf(data.method).toString(),
@@ -122,7 +123,7 @@ export const eoFormatRequestData = (
 };
 export const eoFormatResponseData = ({ globals, report, history, id }) => {
   let result: ApiTestRes;
-  let reportList = report.reportList || [];
+  const reportList = report.reportList || [];
   //preScript code tips
   if (report.errorReason) {
     reportList.unshift({
@@ -143,7 +144,7 @@ export const eoFormatResponseData = ({ globals, report, history, id }) => {
       globals,
       id,
       response: {
-        reportList: reportList,
+        reportList,
       },
     };
     return result;
@@ -158,7 +159,7 @@ export const eoFormatResponseData = ({ globals, report, history, id }) => {
   };
   result = {
     status: 'finish',
-    id: id,
+    id,
     globals,
     general: report.general,
     response: { blobFileName: report.blobFileName, ...response },
@@ -183,7 +184,7 @@ export const eoFormatResponseData = ({ globals, report, history, id }) => {
   };
   if (result.report.request.requestBodyType === 'formData') {
     result.report.request.requestBody = [];
-    for (var keyName in report.request.body) {
+    for (const keyName in report.request.body) {
       result.report.request.requestBody.push({
         name: keyName,
         value: report.request.body[keyName],

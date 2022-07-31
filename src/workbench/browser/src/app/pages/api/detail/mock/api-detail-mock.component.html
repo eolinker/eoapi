@@ -1,6 +1,18 @@
-<eo-table [(model)]="mocklList" [columns]="mockListColumns" [dataModel]="{ name: '', value: '', description: '' }">
+<eo-table
+  class="w-full"
+  [(model)]="mocklList"
+  [columns]="mockListColumns"
+  [dataModel]="{ name: '', value: '', description: '' }"
+>
   <ng-template cell="url" let-scope="scope" let-index="index">
-    <span  i18n-nzTooltipTitle nzTooltipTitle="Click to Copy" nzTooltipPlacement="top" nz-tooltip (click)="copyText(scope.url )" class="truncate">
+    <span
+      i18n-nzTooltipTitle
+      nzTooltipTitle="Click to Copy"
+      nzTooltipPlacement="top"
+      nz-tooltip
+      (click)="copyText(scope.url)"
+      class="truncate"
+    >
       {{ scope.url }}
     </span>
   </ng-template>

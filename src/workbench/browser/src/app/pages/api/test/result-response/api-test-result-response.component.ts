@@ -11,14 +11,12 @@ export class ApiTestResultResponseComponent implements OnInit, OnChanges {
   @Input() model: any | ApiTestHistoryResponse;
   codeStatus: { status: string; cap: number; class: string };
   size: string;
-  blobUrl:string='';
+  blobUrl='';
   responseIsImg = false;
   constructor(private apiTest: ApiTestService) {}
   ngOnChanges(changes) {
-    if (changes.model) {
+    if (changes.model&&this.model) {
       this.codeStatus = this.apiTest.getHTTPStatus(this.model.statusCode);
-      //show response
-      // this.responseIsImg =/\.((jpg)|(jpeg)|(png)|(gif)|(bmg))/i.test(this.model.blobFileName) || /image/.test(this.model.contentType);
     }
   }
   ngOnInit(): void {}

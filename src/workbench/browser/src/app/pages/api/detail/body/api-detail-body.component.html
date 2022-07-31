@@ -1,24 +1,11 @@
 <!-- FormData -->
 <!-- JSON -->
 <!-- XML -->
-<list-block-common-component class="eo-block-container"
-  *ngIf="['formData', 'json', 'xml'].includes(bodyType)"
-  [mainObject]="listConf"
-  [(list)]="model"
-></list-block-common-component>
+<list-block-common-component class="eo-block-container" *ngIf="['formData', 'json', 'xml'].includes(bodyType)"
+  [mainObject]="listConf" [(list)]="model"></list-block-common-component>
 <!-- Raw -->
-<eo-editor
-  [(code)]="model"
-  *ngIf="bodyType === 'raw'"
-  [eventList]="['type', 'format', 'copy', 'download', 'newTab', 'search', 'replace']"
-></eo-editor>
+<eo-monaco-editor [(code)]="model" *ngIf="bodyType === 'raw'"
+  [eventList]="['type', 'format', 'copy',  'search', 'replace']">
+</eo-monaco-editor>
 <!-- Binary -->
-<textarea
-  class="btd"
-  rows="4"
-  *ngIf="bodyType === 'binary'"
-  nzBorderless
-  placeholder="参数描述"
-  nz-input
-  [(ngModel)]="model"
-></textarea>
+<pre *ngIf="bodyType === 'binary'">{{model}}</pre>

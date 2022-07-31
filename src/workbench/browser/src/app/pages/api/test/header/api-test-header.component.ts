@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angu
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { ApiTestHeaders } from '../../../../shared/services/api-test/api-test-params.model';
+import { ApiTestHeaders } from '../../../../shared/services/api-test/api-test.model';
 import { ApiTestService } from '../api-test.service';
 @Component({
   selector: 'eo-api-test-header',
@@ -33,7 +33,7 @@ export class ApiTestHeaderComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes) {
     if (changes.model) {
-      let currentVal = changes.model.currentValue;
+      const currentVal = changes.model.currentValue;
       if (currentVal && (!currentVal.length || (currentVal.length && currentVal[currentVal.length - 1].name))) {
         this.model.push(Object.assign({}, this.itemStructure));
       }

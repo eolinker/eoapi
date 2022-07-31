@@ -15,6 +15,7 @@
     "postinstall": "electron-builder install-app-deps",
     "start": "npm-run-all -p start:workbench electron:serve",
     "serve:web": "cd src/workbench/browser && npm run ng:serve",
+    "start:testServer": "cd src/workbench/node/server && yarn start",
     "start:workbench": "cd src/workbench/browser && yarn start",
     "build:workbench": "cd src/workbench/browser && yarn build",
     "test:workbench": "cd src/workbench/browser && yarn test",

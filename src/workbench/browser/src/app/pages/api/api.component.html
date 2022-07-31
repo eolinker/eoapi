@@ -1,11 +1,11 @@
 <nz-layout class="layout">
   <nz-sider nzTheme="light" nzWidth="250">
     <!-- <div class="side-container"> -->
-    <nz-content class="api-tabs">
+    <nz-content class="api-container-tabs">
       <nz-tabset nzCentered [nzAnimated]="false" [(nzSelectedIndex)]="tabsIndex">
         <nz-tab [nzTitle]="apiTitle">
           <ng-template #apiTitle>
-            <span i18n-nzTooltipTitle nzTooltipTitle="Collections" nz-tooltip class="text-lg">
+            <span i18n-nzTooltipTitle nzTooltipTitle="Collections" nz-tooltip class="text-lg tab-content">
               <eo-iconpark-icon name="folder-open"></eo-iconpark-icon>
             </span>
           </ng-template>
@@ -15,19 +15,11 @@
         </nz-tab>
         <nz-tab [nzTitle]="historyTitle">
           <ng-template #historyTitle>
-            <span i18n-nzTooltipTitle nzTooltipTitle="History" nz-tooltip class="text-lg">
+            <span i18n-nzTooltipTitle nzTooltipTitle="History" nz-tooltip class="text-lg tab-content">
               <eo-iconpark-icon name="history"></eo-iconpark-icon>
             </span>
           </ng-template>
           <eo-history></eo-history>
-        </nz-tab>
-        <nz-tab [nzTitle]="envTitle">
-          <ng-template #envTitle>
-            <span i18n-nzTooltipTitle nzTooltipTitle="Environment" nz-tooltip class="text-lg">
-              <eo-iconpark-icon name="instruction"></eo-iconpark-icon>
-            </span>
-          </ng-template>
-          <eo-env></eo-env>
         </nz-tab>
       </nz-tabset>
     </nz-content>
@@ -47,6 +39,7 @@
               nzAllowClear
               i18n-nzPlaceHolder="Environment Dropdown placeholder"
               nzPlaceHolder="Environment"
+              #envSelect
             >
               <nz-option *ngFor="let item of envList" [nzValue]="item.uuid" [nzLabel]="item.name"></nz-option>
             </nz-select>
@@ -59,7 +52,8 @@
             <span
               class="flex items-center justify-center mx-1 icon"
               i18n-nzTooltipTitle
-              nz-tooltip nzTooltipTitle="Enviroment Quick Look"
+              nz-tooltip
+              nzTooltipTitle="Enviroment Quick Look"
               nz-popover
               [nzPopoverContent]="envParams"
               nzPopoverPlacement="bottomRight"
@@ -67,11 +61,13 @@
             >
               <eo-iconpark-icon name="eyes"></eo-iconpark-icon>
             </span>
-            <ng-template #envParams> <env-list></env-list> </ng-template>
+            <ng-template #envParams>
+              <env-list></env-list>
+            </ng-template>
           </div>
         </div>
         <div class="content_container {{ this.id ? 'has_tab_page' : '' }}">
-          <nz-tabset class="inside_page_tab" [nzAnimated]="false" *ngIf="this.id" nzLinkRouter>
+          <nz-tabset class="inside_page_tabset" [nzAnimated]="false" *ngIf="this.id" nzLinkRouter>
             <nz-tab *ngFor="let tab of TABS">
               <a
                 *nzTabLink
@@ -79,12 +75,35 @@
                 (click)="clickContentMenu(tab)"
                 [routerLink]="[tab.routerLink]"
                 queryParamsHandling="merge"
-                >{{ tab.title }}</a
+              >
+                {{ tab.title }}</a
               >
             </nz-tab>
           </nz-tabset>
-          <router-outlet></router-outlet>
         </div>
+        <!-- <eo-split-panel direction="row"> -->
+        <section class="relative" [ngStyle]="{ paddingRight: activeBar ? dyWidth + 'px' : '40px' }">
+          <router-outlet></router-outlet>
+          <eo-split-x *ngIf="activeBar" (x)="handleDrag($event)" [init]="[200, dyWidth, 400]"></eo-split-x>
+          <div
+            class="absolute top-0 bottom-0 right-0 flex right-bar"
+            [ngClass]="{ 'left-line': !activeBar }"
+            [ngStyle]="{ width: activeBar ? dyWidth + 'px' : '40px' }"
+          >
+            <div
+              class="flex items-center justify-center w-[40px] p-2 h-10 env-icon"
+              [ngClass]="activeBar ? 'active' : ''"
+              (click)="toggleRightBar()"
+              nz-tooltip
+              i18n-nzTooltipTitle="@@Environment Setting"
+              nzTooltipTitle="Environment Setting"
+            >
+              <eo-iconpark-icon name="instruction"></eo-iconpark-icon>
+            </div>
+            <eo-env *ngIf="activeBar" class="flex-auto" (statusChange)="toggleRightBar(false)"></eo-env>
+          </div>
+          <eo-env *ngIf="activeBar" class="flex-auto" (statusChange)="toggleRightBar(false)"></eo-env>
+        </section>
       </div>
     </nz-content>
   </nz-layout>

@@ -21,6 +21,10 @@
       height: calc(100vh - var(--NAVBAR_HEIGHT) - var(--FOOTER_HEIGHT) - var(--remote-notification-height) - 46px);
       overflow: auto;
     }
+    router-outlet + eo-api-test {
+      overflow: unset;
+    }
+
     .has_tab_page router-outlet + * {
       height: calc(
         100vh - var(--NAVBAR_HEIGHT) - var(--FOOTER_HEIGHT) - var(--remote-notification-height) - 45px - 47px
@@ -35,3 +39,4 @@
     }
   }
 }
+

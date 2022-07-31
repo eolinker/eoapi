@@ -14,7 +14,7 @@ const { resolve } = require('path');
     _HttpPackageClass = new (require('./libs/http.package').core)(),
     _GetFileClass = new (require('./libs/getFile.package').core)(),
     _LibsMineType = require('./libs/mineType.package');
-    
+
   let CONFIG = require('./config.json');
 
   const _EO_LANG_OBJ = require('./lang.json');
@@ -61,6 +61,7 @@ const { resolve } = require('path');
         tmpHeaderObj = {},
         tmpBinaryFileName,
         tmpRequestType = inputTestData.requestType.toString();
+      global.eoTestGlobals = inputTestData.globals;
       try {
         inputTestData.headers.map(function (val, key) {
           tmpHeaderObj[val.headerName] = val.headerValue;
@@ -685,7 +686,7 @@ const { resolve } = require('path');
       });
     }
     main(inputTestData) {
-      global.eoLang = _EO_LANG_OBJ[inputTestData.lang||'en'];
+      global.eoLang = _EO_LANG_OBJ[inputTestData.lang || 'en'];
       let unitCommonClass = this;
       return new Promise((resolve, reject) => {
         async function main() {
@@ -726,7 +727,7 @@ const { resolve } = require('path');
                   method: inputTestData.method,
                 };
                 if (tmpDecorateObj.requestType === '4') {
-                  tmpReportData.requestInfo.requestType = '2';
+                  tmpReportData.requestInfo.requestType = '4';
                   delete tmpReportData.requestInfo.params;
                 } else {
                   switch (typeof tmpDecorateObj.history.body) {

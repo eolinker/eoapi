@@ -1,9 +1,10 @@
 <div class="param_header">
-  <div class="h-9 f_row_ac">
+  <div class="f_row_ac">
     <nz-radio-group [(ngModel)]="bodyType" (ngModelChange)="changeBodyType()">
       <label *ngFor="let item of CONST.API_BODY_TYPE" nz-radio [nzValue]="item.value">{{ item.key }}</label>
     </nz-radio-group>
-    <nz-divider nzType="vertical"></nz-divider>
+    <span class="flex-shrink mx-0.5 text-gray-200">｜</span>
+    <!-- <nz-divider nzType="vertical"></nz-divider> -->
     <params-import *ngIf="['formData', 'json', 'xml'].includes(bodyType)" [baseData]="model" [contentType]="bodyType"
       (baseDataChange)="handleParamsImport($event)" (beforeHandleImport)="beforeHandleImport($event)"
       [rootType]="jsonRootType"></params-import>
@@ -21,8 +22,11 @@
 <list-block-common-component *ngIf="['formData', 'json', 'xml'].includes(bodyType)" [mainObject]="listConf"
   [(list)]="model"></list-block-common-component>
 <!-- Raw -->
-<eo-editor [(code)]="model" *ngIf="bodyType === 'raw'" (codeChange)="rawDataChange()" [config]="{maxLines: 10}"
-  [eventList]="['type', 'format', 'copy', 'download', 'newTab', 'search', 'replace']"></eo-editor>
+<!-- <eo-editor [(code)]="model" *ngIf="bodyType === 'raw'" (codeChange)="rawDataChange()" [config]="{ maxLines: 10 }"
+  [eventList]="['type', 'format', 'copy', 'search', 'replace']"></eo-editor> -->
+<eo-monaco-editor *ngIf="bodyType === 'raw'" [(code)]="model" [maxLine]="20"
+  [eventList]="['type', 'format', 'copy', 'search', 'replace']" (codeChange)="rawDataChange()">
+</eo-monaco-editor>
 <!-- Binary -->
-<textarea class="btd" rows="4" *ngIf="bodyType === 'binary'" nzBorderless placeholder="参数描述" nz-input
-  [(ngModel)]="model"></textarea>
+<textarea class="binary_textarea" rows="4" *ngIf="bodyType === 'binary'" nzBorderless i18n-placeholder
+  (ngModelChange)="rawDataChange()" placeholder="Binary Description" nz-input [(ngModel)]="model"></textarea>
