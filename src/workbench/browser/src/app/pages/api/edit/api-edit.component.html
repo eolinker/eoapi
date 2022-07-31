@@ -4,7 +4,7 @@
     <button type="submit" nz-button nztype="primary" class="eo_theme_btn_success" (click)="saveApi()" i18n>Save</button>
     <nz-divider></nz-divider>
   </div>
-  <form nz-form [nzLayout]="'vertical'" [formGroup]="validateForm">
+  <form  nz-form  [formGroup]="validateForm" [nzLayout]="'vertical'">
     <nz-form-label nzFor="uri">API Path</nz-form-label>
     <nz-input-group nzCompact>
       <nz-select [(ngModel)]="apiData.protocol" formControlName="protocol">
@@ -43,7 +43,7 @@
         <span i18n>{{ panel.nzActive ? 'Shrink' : 'Expand' }}</span>
         <span class="iconfont icon-chevron-{{ panel.nzActive ? 'up' : 'down' }}"></span>
       </ng-template>
-      <nz-tabset [nzAnimated]="false" [(nzSelectedIndex)]="nzSelectedIndex" class="mt10">
+      <nz-tabset [nzAnimated]="false" [nzSelectedIndex]="1" class="mt10">
         <!-- Request Headers -->
         <nz-tab [nzTitle]="headerTitleTmp" [nzForceRender]="true">
           <ng-template #headerTitleTmp>

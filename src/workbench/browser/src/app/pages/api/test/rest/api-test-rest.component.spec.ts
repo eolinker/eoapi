@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 
 import { ApiTestRestComponent } from './api-test-rest.component';
 
@@ -9,7 +9,7 @@ describe('ApiTestRestComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [ApiTestService],
+      providers: [ApiTestUtilService],
       declarations: [ApiTestRestComponent],
     }).compileComponents();
   });

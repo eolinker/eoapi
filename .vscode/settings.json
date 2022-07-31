@@ -8,7 +8,7 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
-    "**/.angular/**.*": true,
+    "**/.angular/**/**.*": true,
     "**/*.code-search": true,
     "**/*.lock": true
   }

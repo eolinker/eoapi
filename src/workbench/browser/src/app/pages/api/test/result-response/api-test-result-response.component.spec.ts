@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 import { ApiTestResultResponseComponent } from './api-test-result-response.component';
 import { ByteToStringPipe } from './get-size.pipe';
 
@@ -9,7 +9,7 @@ describe ('ApiTestResultResponseComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [ApiTestService],
+      providers: [ApiTestUtilService],
       declarations: [ApiTestResultResponseComponent, ByteToStringPipe],
     }).compileComponents();
   });

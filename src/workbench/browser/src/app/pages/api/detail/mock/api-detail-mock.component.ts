@@ -1,5 +1,5 @@
 import { Component, OnChanges, OnInit, Input, SimpleChanges } from '@angular/core';
-import { ApiTestService } from 'eo/workbench/browser/src/app/pages/api/test/api-test.service';
+import { ApiTestUtilService } from 'eo/workbench/browser/src/app/pages/api/test/api-test-util.service';
 import {  formatUri } from 'eo/workbench/browser/src/app/shared/services/api-test/api-test.utils';
 import { RemoteService } from 'eo/workbench/browser/src/app/shared/services/remote/remote.service';
 import { StorageService } from 'eo/workbench/browser/src/app/shared/services/storage/storage.service';
@@ -37,7 +37,7 @@ export class ApiDetailMockComponent implements OnInit, OnChanges {
   private destroy$: Subject<void> = new Subject<void>();
   constructor(
     private storageService: StorageService,
-    private apiTest: ApiTestService,
+    private apiTest: ApiTestUtilService,
     private remoteService: RemoteService,
     private message: NzMessageService
   ) {}

@@ -9,7 +9,7 @@ import {
   ApiTestBody,
 } from '../../../../shared/services/api-test/api-test-params.model';
 import { ApiBodyType, JsonRootType } from '../../../../shared/services/storage/index.model';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 import { EoMessageService } from 'eo/workbench/browser/src/app/eoui/message/eo-message.service';
 
 @Component({
@@ -41,7 +41,7 @@ export class ApiTestBodyComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   private rawChange$: Subject<string> = new Subject<string>();
   constructor(
-    private apiTest: ApiTestService,
+    private apiTest: ApiTestUtilService,
     private cdRef: ChangeDetectorRef,
     private message: EoMessageService
   ) {

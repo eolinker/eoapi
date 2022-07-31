@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef, AfterViewChecked, OnChanges } from '@angular/core';
 import { ApiEditHeaders } from '../../../../shared/services/storage/index.model';
-import { ApiEditService } from '../api-edit.service';
+import { ApiEditUtilService } from '../api-edit-util.service';
 @Component({
   selector: 'eo-api-edit-header',
   templateUrl: './api-edit-header.component.html',
@@ -15,7 +15,7 @@ export class ApiEditHeaderComponent implements OnInit, OnChanges, AfterViewCheck
     example: '',
     description: '',
   };
-  constructor(private editService: ApiEditService, private cdRef: ChangeDetectorRef) {}
+  constructor(private editService: ApiEditUtilService, private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.initListConf();

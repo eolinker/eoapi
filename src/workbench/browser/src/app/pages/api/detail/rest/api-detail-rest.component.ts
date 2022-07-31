@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ApiEditRest } from '../../../../shared/services/storage/index.model';
-import { ApiDetailService } from '../api-detail.service';
+import { ApiDetailUtilService } from '../api-detail-util.service';
 @Component({
   selector: 'eo-api-detail-rest',
   templateUrl: './api-detail-rest.component.html',
@@ -9,7 +9,7 @@ import { ApiDetailService } from '../api-detail.service';
 export class ApiDetailRestComponent implements OnInit {
   @Input() model: ApiEditRest[];
   listConf: object = {};
-  constructor(private detailService: ApiDetailService) {}
+  constructor(private detailService: ApiDetailUtilService) {}
   ngOnInit(): void {
     this.initListConf();
   }

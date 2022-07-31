@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { ApiTestHeaders } from '../../../../shared/services/api-test/api-test-params.model';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 @Component({
   selector: 'eo-api-test-header',
   templateUrl: './api-test-header.component.html',
@@ -22,7 +22,7 @@ export class ApiTestHeaderComponent implements OnInit, OnChanges {
     required: true,
     value: '',
   };
-  constructor(private editService: ApiTestService) {
+  constructor(private editService: ApiTestUtilService) {
     this.modelChange$.pipe(debounceTime(500), takeUntil(this.destroy$)).subscribe(() => {
       this.modelChange.emit(this.model);
     });

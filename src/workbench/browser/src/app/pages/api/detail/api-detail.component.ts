@@ -11,17 +11,6 @@ import { treeToListHasLevel } from '../../../utils/tree/tree.utils';
 import { reverseObj } from '../../../utils';
 import { StorageService } from '../../../shared/services/storage';
 import { RemoteService } from 'eo/workbench/browser/src/app/shared/services/remote/remote.service';
-
-export interface TreeNodeInterface {
-  key?: string;
-  name: string;
-  age?: number;
-  level?: number;
-  expand?: boolean;
-  address?: string;
-  children?: TreeNodeInterface[];
-  parent?: TreeNodeInterface;
-}
 @Component({
   selector: 'api-detail',
   templateUrl: './api-detail.component.html',
@@ -39,12 +28,15 @@ export class ApiDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute, private storage: StorageService, private remoteService: RemoteService) {}
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      if (params.uuid) {
-        this.getApiByUuid(Number(params.uuid));
-      } else {
-        console.error("can't no find api");
-      }
+      this.init(params.uuid);
     });
+  }
+  init(id) {
+    if (id) {
+      this.getApiByUuid(Number(id));
+    } else {
+      console.error("can't no find api");
+    }
   }
   getApiByUuid(id: number) {
     this.storage.run('apiDataLoad', [id], (result: StorageRes) => {

@@ -9,7 +9,7 @@ import {
   ApiBodyType,
   JsonRootType,
 } from '../../../../shared/services/storage/index.model';
-import { ApiEditService } from '../api-edit.service';
+import { ApiEditUtilService } from '../api-edit-util.service';
 @Component({
   selector: 'eo-api-edit-body',
   templateUrl: './api-edit-body.component.html',
@@ -39,7 +39,7 @@ export class ApiEditBodyComponent implements OnInit, OnChanges, OnDestroy {
   private bodyType$: Subject<string> = new Subject<string>();
   private destroy$: Subject<void> = new Subject<void>();
   private rawChange$: Subject<string> = new Subject<string>();
-  constructor(private apiEdit: ApiEditService, private cdRef: ChangeDetectorRef) {
+  constructor(private apiEdit: ApiEditUtilService, private cdRef: ChangeDetectorRef) {
     this.bodyType$.pipe(pairwise(), takeUntil(this.destroy$)).subscribe((val) => {
       this.beforeChangeBodyByType(val[0]);
     });

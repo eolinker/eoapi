@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalService } from '../../../../shared/services/modal.service';
-import { ApiEditService } from '../api-edit.service';
+import { ApiEditUtilService } from '../api-edit-util.service';
 
 import { ApiEditRestComponent } from './api-edit-rest.component';
 
@@ -11,7 +11,7 @@ describe('ApiEditRestComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [ApiEditService, { provide: ModalService, useClass: MockModalService }],
+      providers: [ApiEditUtilService, { provide: ModalService, useClass: MockModalService }],
       declarations: [ApiEditRestComponent],
     }).compileComponents();
   });

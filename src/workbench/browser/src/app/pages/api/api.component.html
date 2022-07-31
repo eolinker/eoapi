@@ -37,7 +37,7 @@
     <nz-content>
       <div class="inner-content">
         <div class="flex items-center tabs-bar">
-          <eo-api-tab class="fg1"></eo-api-tab>
+          <eo-api-tab class="fg1" [tagsTemplate]="tagsTemplate" #apiTabComponent></eo-api-tab>
           <div class="flex items-center fix-mt">
             <nz-select
               [(ngModel)]="envUuid"
@@ -59,7 +59,8 @@
             <span
               class="flex items-center justify-center mx-1 icon"
               i18n-nzTooltipTitle
-              nz-tooltip nzTooltipTitle="Enviroment Quick Look"
+              nz-tooltip
+              nzTooltipTitle="Enviroment Quick Look"
               nz-popover
               [nzPopoverContent]="envParams"
               nzPopoverPlacement="bottomRight"
@@ -71,19 +72,20 @@
           </div>
         </div>
         <div class="content_container {{ this.id ? 'has_tab_page' : '' }}">
-          <nz-tabset class="inside_page_tab" [nzAnimated]="false" *ngIf="this.id" nzLinkRouter>
+          <nz-tabset class="inside_page_tab" *ngIf="this.id" nzLinkRouter>
             <nz-tab *ngFor="let tab of TABS">
               <a
                 *nzTabLink
                 nz-tab-link
-                (click)="clickContentMenu(tab)"
                 [routerLink]="[tab.routerLink]"
+                [queryParams]="{ pageID: pageID }"
+                nzLinkExact="false"
                 queryParamsHandling="merge"
                 >{{ tab.title }}</a
               >
             </nz-tab>
           </nz-tabset>
-          <router-outlet></router-outlet>
+          <router-outlet (activate)="onActivate($event)"></router-outlet>
         </div>
       </div>
     </nz-content>

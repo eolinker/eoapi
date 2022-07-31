@@ -17,8 +17,8 @@ import { take, takeUntil, distinctUntilChanged, pairwise, filter } from 'rxjs/op
 import { ApiTestHistoryComponent } from './history/api-test-history.component';
 
 import { TestServerService } from '../../../shared/services/api-test/test-server.service';
-import { ApiTestService } from './api-test.service';
-import { ApiTabService } from '../tab/api-tab.service';
+import { ApiTestUtilService } from './api-test-util.service';
+import { ApiTabStorageService } from '../tab/api-tab-storage.service';
 import { objectToArray } from '../../../utils';
 
 import { EnvState } from '../../../shared/store/env.state';
@@ -78,8 +78,8 @@ export class ApiTestComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private ref: ChangeDetectorRef,
-    private apiTest: ApiTestService,
-    private apiTab: ApiTabService,
+    private apiTest: ApiTestUtilService,
+    private apiTab: ApiTabStorageService,
     private testServerService: TestServerService,
     private messageService: MessageService,
     private storage: StorageService,
@@ -168,7 +168,6 @@ export class ApiTestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const apiDataId = Number(this.route.snapshot.queryParams.uuid);
     this.initApi(apiDataId);
-    this.watchTabChange();
     this.watchEnvChange();
     this.messageService.get().subscribe(({ type, data }) => {
       if (type === 'renderHistory') {
@@ -187,7 +186,7 @@ export class ApiTestComponent implements OnInit, OnDestroy {
       afterScript: this.afterScript,
     };
     this.testServer.send('unitTest', {
-      id: this.apiTab.tabID,
+      // id: this.apiTab.tabID,
       action: 'ajax',
       data: this.testServer.formatRequestData(this.apiData, {
         env: this.env,
@@ -201,7 +200,7 @@ export class ApiTestComponent implements OnInit, OnDestroy {
   }
   private abort() {
     this.testServer.send('unitTest', {
-      id: this.apiTab.tabID,
+      // id: this.apiTab.tabID,
       action: 'abort',
     });
     this.status$.next('tested');
@@ -241,14 +240,14 @@ export class ApiTestComponent implements OnInit, OnDestroy {
 
     //If test sucess,addHistory
     // other tab test finish,support multiple tab test same time
-    if (message.id && this.apiTab.tabID !== message.id) {
-      this.apiTab.tabCache[message.id].testResult = tmpHistory;
-      const tab = this.apiTab.tabs.find((val) => val.uuid === message.id);
-      if (tab) {
-        this.addHistory(message, tab.key);
-      }
-      return;
-    }
+    // if (message.id && this.apiTab.tabID !== message.id) {
+    //   this.apiTab.storage[message.id].testResult = tmpHistory;
+    //   const tab = this.apiTab.tabs.find((val) => val.uuid === message.id);
+    //   if (tab) {
+    //     this.addHistory(message, tab.key);
+    //   }
+    //   return;
+    // }
     this.addHistory(message, this.apiData.uuid);
   }
   /**
@@ -285,15 +284,15 @@ export class ApiTestComponent implements OnInit, OnDestroy {
   private initApi(id) {
     this.resetForm();
     this.initBasicForm();
-    //recovery from tab
-    if (this.apiTab.currentTab && this.apiTab.tabCache[this.apiTab.tabID]) {
-      const tabData = this.apiTab.tabCache[this.apiTab.tabID];
-      this.apiData = tabData.apiData;
-      this.testResult = tabData.testResult;
-      this.validateForm.patchValue(this.apiData);
-      this.setScriptsByHistory(tabData.testResult);
-      return;
-    }
+    // //recovery from tab
+    // if (this.apiTab.currentTab && this.apiTab.tabCache[this.apiTab.tabID]) {
+    //   const tabData = this.apiTab.tabCache[this.apiTab.tabID];
+    //   this.apiData = tabData.apiData;
+    //   this.testResult = tabData.testResult;
+    //   this.validateForm.patchValue(this.apiData);
+    //   this.setScriptsByHistory(tabData.testResult);
+    //   return;
+    // }
     if (!id) {
       Object.assign(this.apiData, {
         uuid: 0,
@@ -315,25 +314,6 @@ export class ApiTestComponent implements OnInit, OnDestroy {
         this.env = env;
       }
     });
-  }
-  private watchTabChange() {
-    this.apiTab.tabChange$
-      .pipe(
-        pairwise(),
-        //actually change tab,not init tab
-        filter((data) => data[0].uuid !== data[1].uuid),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(([nowTab, nextTab]) => {
-        this.apiTab.saveTabData$.next({
-          tab: nowTab,
-          data: {
-            apiData: this.apiData,
-            testResult: this.testResult,
-          },
-        });
-        this.initApi(nextTab.key);
-      });
   }
   /**
    * Init API data structure

@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, LOCALE_ID, EventEmitter, Input, Output } from '@angular/core';
 import { formatDate } from '@angular/common';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 import { EoMessageService } from 'eo/workbench/browser/src/app/eoui/message/eo-message.service';
 import { StorageService } from '../../../../shared/services/storage';
 import {
@@ -23,7 +23,7 @@ export class ApiTestHistoryComponent implements OnInit {
   constructor(
     @Inject(LOCALE_ID) private locale: string,
     private message: EoMessageService,
-    private apiTest: ApiTestService,
+    private apiTest: ApiTestUtilService,
     private storage: StorageService
   ) {
     this.initListConf();

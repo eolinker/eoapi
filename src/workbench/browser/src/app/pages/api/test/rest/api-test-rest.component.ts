@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef, OnChanges } from '@angular/core';
 import { ApiTestRest } from '../../../../shared/services/api-test/api-test-params.model';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 @Component({
   selector: 'eo-api-test-rest',
   templateUrl: './api-test-rest.component.html',
@@ -14,7 +14,7 @@ export class ApiTestRestComponent implements OnInit, OnChanges {
     required: true,
     value: '',
   };
-  constructor(private editService: ApiTestService, private cdRef: ChangeDetectorRef) {}
+  constructor(private editService: ApiTestUtilService, private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.initListConf();

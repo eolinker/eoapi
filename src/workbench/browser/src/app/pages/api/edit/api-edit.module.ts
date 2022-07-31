@@ -29,7 +29,8 @@ import { ApiEditQueryComponent } from './query/api-edit-query.component';
 import { ApiEditRestComponent } from './rest/api-edit-rest.component';
 import { ApiParamsExtraSettingComponent } from './extra-setting/api-params-extra-setting.component';
 
-import { ApiEditService } from './api-edit.service';
+import { ApiEditUtilService } from './api-edit-util.service';
+import { ApiEditService } from 'eo/workbench/browser/src/app/pages/api/edit/api-edit.service';
 
 const NZ_COMPONETS = [
   NzDropDownModule,
@@ -67,6 +68,6 @@ const COMPONENTS = [
     SharedModule,
     ParamsImportModule,
   ],
-  providers: [ApiEditService],
+  providers: [ApiEditUtilService,ApiEditService],
 })
 export class ApiEditModule {}

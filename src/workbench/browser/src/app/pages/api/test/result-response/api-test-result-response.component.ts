@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { getBlobUrl } from 'eo/workbench/browser/src/app/utils';
 import { ApiTestHistoryResponse } from '../../../../shared/services/storage/index.model';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 @Component({
   selector: 'eo-api-test-result-response',
   templateUrl: './api-test-result-response.component.html',
@@ -13,7 +13,7 @@ export class ApiTestResultResponseComponent implements OnInit, OnChanges {
   size: string;
   blobUrl:string='';
   responseIsImg = false;
-  constructor(private apiTest: ApiTestService) {}
+  constructor(private apiTest: ApiTestUtilService) {}
   ngOnChanges(changes) {
     if (changes.model) {
       this.codeStatus = this.apiTest.getHTTPStatus(this.model.statusCode);

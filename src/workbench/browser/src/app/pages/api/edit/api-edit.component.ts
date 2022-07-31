@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -6,7 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTreeSelectComponent } from 'ng-zorro-antd/tree-select';
 
 import { Subject } from 'rxjs';
-import { debounceTime, take, takeUntil, pairwise, filter } from 'rxjs/operators';
+import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { MessageService } from '../../../shared/services/message';
 import { StorageService } from '../../../shared/services/storage';
 
@@ -19,31 +19,26 @@ import {
   StorageRes,
   StorageResStatus,
 } from '../../../shared/services/storage/index.model';
-import { ApiTabService } from '../tab/api-tab.service';
 
 import { objectToArray } from '../../../utils';
 import { getRest } from '../../../utils/api';
-import {
-  treeToListHasLevel,
-  listToTree,
-  listToTreeHasLevel,
-  getExpandGroupByKey,
-} from '../../../utils/tree/tree.utils';
+import { listToTree, getExpandGroupByKey } from '../../../utils/tree/tree.utils';
 import { ApiParamsNumPipe } from '../../../shared/pipes/api-param-num.pipe';
+import { ApiEditService } from 'eo/workbench/browser/src/app/pages/api/edit/api-edit.service';
 @Component({
   selector: 'eo-api-edit-edit',
   templateUrl: './api-edit.component.html',
   styleUrls: ['./api-edit.component.scss'],
 })
 export class ApiEditComponent implements OnInit, OnDestroy {
+  @Input() apiData: ApiData;
+  @Output() modelChange = new EventEmitter<ApiData>();
   @ViewChild('apiGroup') apiGroup: NzTreeSelectComponent;
-  validateForm!: FormGroup;
-  apiData: ApiData;
+  validateForm: FormGroup;
   groups: any[];
   expandKeys: string[];
   REQUEST_METHOD = objectToArray(RequestMethod);
   REQUEST_PROTOCOL = objectToArray(RequestProtocol);
-  nzSelectedIndex = 1;
 
   private destroy$: Subject<void> = new Subject<void>();
   private changeGroupID$: Subject<string | number> = new Subject();
@@ -53,8 +48,8 @@ export class ApiEditComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private message: NzMessageService,
     private messageService: MessageService,
-    private apiTab: ApiTabService,
-    private storage: StorageService
+    private storage: StorageService,
+    private apiEdit: ApiEditService
   ) {}
   getApiGroup() {
     this.groups = [];
@@ -83,21 +78,7 @@ export class ApiEditComponent implements OnInit, OnDestroy {
         treeItems.sort((a, b) => a.weight - b.weight);
       }
       listToTree(treeItems, this.groups, '0');
-      this.afterInitGroup();
-    });
-  }
-  getApi(id) {
-    this.storage.run('apiDataLoad', [id], (result: StorageRes) => {
-      if (result.status === StorageResStatus.success) {
-        ['requestBody', 'responseBody'].forEach((tableName) => {
-          if (['xml', 'json'].includes(result.data[`${tableName}Type`])) {
-            result.data[tableName] = treeToListHasLevel(result.data[tableName]);
-          }
-        });
-        this.apiData = result.data;
-        this.changeGroupID$.next(this.apiData.groupID);
-        this.validateForm.patchValue(this.apiData);
-      }
+      this.resetGroupID();
     });
   }
   saveApi() {
@@ -112,20 +93,6 @@ export class ApiEditComponent implements OnInit, OnDestroy {
       return;
     }
     const formData: any = Object.assign({}, this.apiData, this.validateForm.value);
-    formData.groupID = Number(formData.groupID === '-1' ? '0' : formData.groupID);
-    ['requestBody', 'queryParams', 'restParams', 'requestHeaders', 'responseHeaders', 'responseBody'].forEach(
-      (tableName) => {
-        if (typeof this.apiData[tableName] !== 'object') {
-          return;
-        }
-        formData[tableName] = (this.apiData[tableName] || []).filter((val) => val.name);
-        if (['requestBody', 'responseBody'].includes(tableName)) {
-          if (['xml', 'json'].includes(formData[`${tableName}Type`])) {
-            formData[tableName] = listToTreeHasLevel(formData[tableName]);
-          }
-        }
-      }
-    );
     this.editApi(formData);
   }
   bindGetApiParamNum(params) {
@@ -133,103 +100,49 @@ export class ApiEditComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.getApiGroup();
-    this.initApi(Number(this.route.snapshot.queryParams.uuid));
-    this.watchTabChange();
     this.watchGroupIDChange();
+    this.init();
+    this.initBasicForm();
     this.watchUri();
   }
+  async init() {
+    if (!this.apiData) {
+      this.apiData = {} as ApiData;
+      const id = Number(this.route.snapshot.queryParams.uuid);
+      this.apiData = await this.apiEdit.getApi({
+        id,
+        groupID: this.route.snapshot.queryParams.groupID || '-1',
+      });
+    }
 
+    this.changeGroupID$.next(this.apiData.groupID);
+  }
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  private initApi(id) {
-    this.resetForm();
-    this.initBasicForm();
-    //recovery from tab
-    if (this.apiTab.currentTab && this.apiTab.tabCache[this.apiTab.tabID]) {
-      let tabData = this.apiTab.tabCache[this.apiTab.tabID];
-      this.apiData = tabData.apiData;
-      return;
-    }
-    if (!id) {
-      let tmpApiData = window.sessionStorage.getItem('apiDataWillbeSave');
-      if (tmpApiData) {
-        //Add From Test|Copy Api
-        window.sessionStorage.removeItem('apiDataWillbeSave');
-        Object.assign(this.apiData, JSON.parse(tmpApiData));
-        console.log(this.apiData)
-        this.validateForm.patchValue(this.apiData);
-      } else {
-        //Add directly
-        Object.assign(this.apiData, {
-          requestBodyType: 'json',
-          requestBodyJsonType: 'object',
-          requestBody: [],
-          queryParams: [],
-          restParams: [],
-          requestHeaders: [],
-          responseHeaders: [],
-          responseBodyType: 'json',
-          responseBodyJsonType: 'object',
-          responseBody: [],
-        });
-      }
-    } else {
-      this.getApi(id);
-    }
-  }
-  private watchTabChange() {
-    this.apiTab.tabChange$
-      .pipe(
-        pairwise(),
-        //actually change tab,not init tab
-        filter((data) => data[0].uuid !== data[1].uuid),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(([nowTab, nextTab]) => {
-        this.apiTab.saveTabData$.next({
-          tab: nowTab,
-          data: {
-            apiData: this.apiData,
-          },
-        });
-        this.initApi(nextTab.key);
-      });
-  }
   private watchGroupIDChange() {
     this.changeGroupID$.pipe(debounceTime(500), take(1)).subscribe((id) => {
       this.apiData.groupID = (this.apiData.groupID === 0 ? -1 : this.apiData.groupID).toString();
-      this.expandGroup();
+      /**
+       * Expand Select Group
+       */
+      this.expandKeys = getExpandGroupByKey(this.apiGroup, this.apiData.groupID.toString());
     });
   }
-  /**
-   * Generate Rest Param From Url
-   */
   private watchUri() {
     this.validateForm
       .get('uri')
       .valueChanges.pipe(debounceTime(500), takeUntil(this.destroy$))
       .subscribe((url) => {
-        const rests = getRest(url);
-        rests.forEach((newRest) => {
-          if (this.apiData.restParams.find((val: ApiEditRest) => val.name === newRest)) {
-            return;
-          }
-          const restItem: ApiEditRest = {
-            name: newRest,
-            required: true,
-            example: '',
-            description: '',
-          };
-          this.apiData.restParams.splice(this.apiData.restParams.length - 1, 0, restItem);
-        });
+        this.generateRestFromUrl(url);
       });
   }
   /**
    * Reset Group ID after group list load
+   * Resolve the problem that groupID change but view not change
    */
-  private afterInitGroup() {
+  private resetGroupID() {
     let groupID: number | string = '-1';
     if (this.apiData && this.apiData.groupID) {
       groupID = this.apiData.groupID;
@@ -239,12 +152,6 @@ export class ApiEditComponent implements OnInit, OnDestroy {
       this.apiData.groupID = groupID;
       this.changeGroupID$.next(groupID);
     }, 0);
-  }
-  /**
-   * Expand Select Group
-   */
-  private expandGroup() {
-    this.expandKeys = getExpandGroupByKey(this.apiGroup, this.apiData.groupID.toString());
   }
   /**
    * Init basic form,such as url,protocol,method
@@ -257,33 +164,32 @@ export class ApiEditComponent implements OnInit, OnDestroy {
     this.validateForm = this.fb.group(controls);
   }
   /**
-   * Init API data structure
+   * Generate Rest Param From Url
    */
-  private resetForm() {
-    this.apiData = {
-      name: '',
-      projectID: 1,
-      uri: '/',
-      groupID: this.route.snapshot.queryParams.groupID || '-1',
-      protocol: RequestProtocol.HTTP,
-      method: RequestMethod.POST,
-    };
-  }
-
-  private editApi(formData) {
-    const busEvent = formData.uuid ? 'editApi' : 'addApi';
-    const title = busEvent === 'editApi' ? '编辑成功' : '新增成功';
-    this.storage.run(
-      busEvent === 'editApi' ? 'apiDataUpdate' : 'apiDataCreate',
-      [formData, this.apiData.uuid],
-      (result: StorageRes) => {
-        if (result.status === StorageResStatus.success) {
-          this.message.success(title);
-          this.messageService.send({ type: `${busEvent}Success`, data: result.data });
-        } else {
-          this.message.success('失败');
-        }
+  private generateRestFromUrl(url) {
+    const rests = getRest(url);
+    rests.forEach((newRest) => {
+      if (this.apiData.restParams.find((val: ApiEditRest) => val.name === newRest)) {
+        return;
       }
-    );
+      const restItem: ApiEditRest = {
+        name: newRest,
+        required: true,
+        example: '',
+        description: '',
+      };
+      this.apiData.restParams.splice(this.apiData.restParams.length - 1, 0, restItem);
+    });
+  }
+  private async editApi(formData) {
+    const busEvent = formData.uuid ? 'editApi' : 'addApi';
+    const title = busEvent === 'editApi' ? $localize`编辑成功` : $localize`新增成功`;
+    const result: StorageRes = await this.apiEdit.editApi(formData);
+    if (result.status === StorageResStatus.success) {
+      this.message.success(title);
+      this.messageService.send({ type: `${busEvent}Success`, data: result.data });
+    } else {
+      this.message.success('失败');
+    }
   }
 }

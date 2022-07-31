@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ApiTestService } from '../api-test.service';
+import { ApiTestUtilService } from '../api-test-util.service';
 
 import { ApiTestHeaderComponent } from './api-test-header.component';
 
@@ -9,7 +9,7 @@ describe('ApiTestHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers:[ApiTestService],
+      providers:[ApiTestUtilService],
       declarations: [ ApiTestHeaderComponent ]
     })
     .compileComponents();

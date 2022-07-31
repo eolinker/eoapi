@@ -6,7 +6,7 @@ import { StorageService } from 'eo/workbench/browser/src/app/shared/services/sto
 import { ActivatedRoute } from '@angular/router';
 import { tree2obj } from 'eo/workbench/browser/src/app/utils/tree/tree.utils';
 import {  formatUri } from 'eo/workbench/browser/src/app/shared/services/api-test/api-test.utils';
-import { ApiTestService } from 'eo/workbench/browser/src/app/pages/api/test/api-test.service';
+import { ApiTestUtilService } from 'eo/workbench/browser/src/app/pages/api/test/api-test-util.service';
 import { RemoteService } from 'eo/workbench/browser/src/app/shared/services/remote/remote.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { copyText } from 'eo/workbench/browser/src/app/utils';
@@ -65,7 +65,7 @@ export class ApiMockComponent implements OnInit, OnChanges {
 
   constructor(
     private storageService: StorageService,
-    private apiTest: ApiTestService,
+    private apiTest: ApiTestUtilService,
     private route: ActivatedRoute,
     private remoteService: RemoteService,
     private message: NzMessageService

@@ -29,7 +29,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { ByteToStringPipe } from './result-response/get-size.pipe';
 
 import { TestServerService } from '../../../shared/services/api-test/test-server.service';
-import { ApiTestService } from './api-test.service';
+import { ApiTestUtilService } from './api-test-util.service';
 import { TestServerLocalNodeService } from '../../../shared/services/api-test/local-node/test-connect.service';
 import { TestServerServerlessService } from '../../../shared/services/api-test/serverless-node/test-connect.service';
 
@@ -85,6 +85,6 @@ const COMPONENTS = [
     SharedModule,
     ParamsImportModule,
   ],
-  providers: [ApiTestService, TestServerService, TestServerLocalNodeService,TestServerServerlessService,TestServerRemoteService],
+  providers: [ApiTestUtilService, TestServerService, TestServerLocalNodeService,TestServerServerlessService,TestServerRemoteService],
 })
 export class ApiTestModule {}

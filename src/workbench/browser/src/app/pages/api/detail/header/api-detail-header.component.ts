@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { ApiEditHeaders } from '../../../../shared/services/storage/index.model';
-import { ApiDetailService } from '../api-detail.service';
+import { ApiDetailUtilService } from '../api-detail-util.service';
 @Component({
   selector: 'eo-api-detail-header',
   templateUrl: './api-detail-header.component.html',
@@ -9,7 +9,7 @@ import { ApiDetailService } from '../api-detail.service';
 export class ApiDetailHeaderComponent implements OnInit, OnChanges {
   @Input() model: ApiEditHeaders[];
   listConf: object = {};
-  constructor(private detailService: ApiDetailService) {}
+  constructor(private detailService: ApiDetailUtilService) {}
 
   ngOnInit(): void {
     this.initListConf();

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { ModalService } from '../../../../shared/services/modal.service';
-import { ApiEditService } from '../api-edit.service';
+import { ApiEditUtilService } from '../api-edit-util.service';
 
 import { ApiEditHeaderComponent } from './api-edit-header.component';
 
@@ -12,7 +12,7 @@ describe('ApiEditHeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NzModalModule],
-      providers: [ApiEditService, ModalService, NzModalService],
+      providers: [ApiEditUtilService, ModalService, NzModalService],
       declarations: [ApiEditHeaderComponent],
     }).compileComponents();
   });
